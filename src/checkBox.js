@@ -37,6 +37,7 @@ class CheckBox {
         }
         // Handle onChange event
         this.onChange = (total) => {if (this.option?.onChange) this.option.onChange(total)};
+        this.onCheckAll = (checkedAll) => {if (this.option?.onCheckAll) this.option.onCheckAll(checkedAll)};
 
         // Handle checkbox
         elem.forEach((ele, index) => {
@@ -112,7 +113,7 @@ class CheckBox {
                         Util.toggleCheckStatus(checkbox, checkedAll);
                     });
                     this.checkBoxChange(false);
-                    if (this.option?.onCheckAll && checkedAll) this.option.onCheckAll(checkedAll);
+                    this.onCheckAll(checkedAll);
                 }).bind(this);
                 cloneEle.addEventListener('change', checkAllChange);
                 cloneEle.checkAllChange = checkAllChange;
