@@ -119,7 +119,6 @@ const Util = {
         if (randomID) {
             cloneEle.removeAttribute('data-checkbox-id');
             cloneEle.id = randomID;
-            labelNode.htmlFor = randomID;
         }
         if (ramainLabel === true) {
             labelNode.htmlFor = cloneEle.id;
@@ -132,7 +131,7 @@ const Util = {
             labelNode.parentNode.removeChild(labelNode);
         } else {
             labelNode.textContent = title;
-            if (bindLabel) {
+            if (bindLabel === true) {
                 labelNode.classList.add('checkbox-labeled');
                 labelNode.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -141,15 +140,22 @@ const Util = {
             }
         }
     },
+    toggleCheckStatus(ele, checked) {
+        if (checked) {
+            ele.checked = true;
+            ele.setAttribute('checked', 'checked');
+        } else {
+            ele.checked = false;
+            ele.removeAttribute('checked');
+        }
+    },
     toggleCheckAll(ele, total) {
         let checkAll = Util.getElem(ele);
         if (!checkAll) return;
         if (total && total.checked && total.input) {
-            checkAll.checked = (total.checked.length !== total.input.length || total.checked.length === 0) ? false : true;
-            (checkAll.checked) ? checkAll.setAttribute('checked', 'checked') : checkAll.removeAttribute('checked');
+            Util.toggleCheckStatus(checkAll, (total.checked.length !== total.input.length || total.checked.length === 0) === false);
         } else {
-            checkAll.checked = false;
-            checkAll.removeAttribute('checked');
+            Util.toggleCheckStatus(checkAll, false);
         }
     }
 };

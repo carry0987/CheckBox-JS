@@ -20,6 +20,7 @@
     <script src="dist/checkBox.min.js"></script>
     <script type="text/javascript">
     let checkBox = new CheckBox('#app .check-box input', {
+        bindLabel: true,
         checkAll: '#check-all',
         onChange: (total) => {
             console.log(total);
