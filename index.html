@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheckBox</title>
+    <link href="dist/checkBox.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <h1>Normal CheckBox</h1>
+        <input type="checkbox" id="check-all" title="Check All">
+        <div class="check-box">
+            <input type="checkbox" name="check-1" data-checkbox-id="check-1" value="Test-1">
+            <label data-checkbox-for="check-1">Check-1</label>
+            <input type="checkbox" name="check-2" id="check-2" value="Test-2" checked>
+            <label for="check-2">Check-2</label>
+        </div>
+    </div>
+    <script src="dist/checkBox.min.js"></script>
+    <script type="text/javascript">
+    let checkBox = new CheckBox('#app .check-box input', {
+        checkAll: '#check-all',
+        onChange: (total) => {
+            console.log(total);
+        }
+    });
+    </script>
+</body>
+</html>
