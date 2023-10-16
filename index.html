@@ -22,8 +22,9 @@
     let checkBox = new CheckBox('#app .check-box input', {
         bindLabel: true,
         checkAll: '#check-all',
-        onChange: (total) => {
+        onChange: (total, target) => {
             console.log(total);
+            if (target) console.log(target);
         }
     });
     </script>

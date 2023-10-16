@@ -36,7 +36,7 @@ class CheckBox {
             Util.injectStylesheet(styles, this.id);
         }
         // Handle onChange event
-        this.onChange = (total) => {if (this.option?.onChange) this.option.onChange(total)};
+        this.onChange = (total, target) => {if (this.option?.onChange) this.option.onChange(total, target)};
         this.onCheckAll = (checkedAll) => {if (this.option?.onCheckAll) this.option.onCheckAll(checkedAll)};
 
         // Handle checkbox
@@ -85,7 +85,7 @@ class CheckBox {
             Util.insertCheckboxTitle(title, bindLabel, labelNode, cloneEle);
 
             // Add event listener
-            let checkBoxChange = this.checkBoxChange.bind(this);
+            let checkBoxChange = this.checkBoxChange.bind(this, true, cloneEle);
             cloneEle.addEventListener('change', checkBoxChange);
             cloneEle.checkBoxChange = checkBoxChange;
 
@@ -124,7 +124,7 @@ class CheckBox {
         return this;
     }
 
-    checkBoxChange(toggleCheckAll = true) {
+    checkBoxChange(toggleCheckAll, target = null) {
         const total = this.total;
         total.list = [];
         total.input = [];
@@ -137,12 +137,12 @@ class CheckBox {
             }
         });
         toggleCheckAll && Util.toggleCheckAll(this.option.checkAll, total);
-        this.onChange(total);
+        this.onChange(total, target);
 
         // Dispatch custom event
-        const event = Util.createEvent('checkbox-change');
-        event.total = total;
-        document.dispatchEvent(event);
+        const customEvent = Util.createEvent('checkbox-change');
+        customEvent.total = total;
+        document.dispatchEvent(customEvent);
     }
 
     getCheckBox() {
