@@ -86,6 +86,61 @@ const Util = {
     isEmpty(str) {
         return (!str?.length);
     },
+    handleCheckboxTitle(ele, labelSibling) {
+        let ramainLabel = false, randomID = null;
+        let title = ele?.title || ele?.dataset?.checkboxTitle;
+
+        if (labelSibling && labelSibling.tagName === 'LABEL') {
+            title = (() => { // using IIFE
+                if (!Util.isEmpty(ele.id)) {
+                    if (labelSibling?.htmlFor === ele.id) {
+                        ramainLabel = true;
+                        return true;
+                    }
+                    if (labelSibling?.dataset?.checkboxFor === ele.id) {
+                        return true;
+                    }
+                }
+                if (ele?.dataset?.checkboxId && labelSibling?.dataset?.checkboxFor === ele?.dataset?.checkboxId) {
+                    randomID = Util.isEmpty(ele.id) && Util.isEmpty(labelSibling.htmlFor) ? 'check-' + Util.createUniqueID(6) : null;
+                    return true;
+                }
+                return null;
+            })();
+        }
+        return [title, ramainLabel, randomID];
+    },
+    insertCheckbox(id, ele, randomID, ramainLabel) {
+        let template = Util.getTemplate(id);
+        let templateNode = document.createElement('div');
+        templateNode.innerHTML = template.trim();
+        let labelNode = Util.getElem('label', templateNode);
+        let cloneEle = ele.cloneNode(true);
+        if (randomID) {
+            cloneEle.removeAttribute('data-checkbox-id');
+            cloneEle.id = randomID;
+            labelNode.htmlFor = randomID;
+        }
+        if (ramainLabel === true) {
+            labelNode.htmlFor = cloneEle.id;
+        }
+        labelNode.parentNode.insertBefore(cloneEle, labelNode);
+        return [cloneEle, templateNode, labelNode];
+    },
+    insertCheckboxTitle(title, bindLabel, labelNode, cloneEle) {
+        if (title === null) {
+            labelNode.parentNode.removeChild(labelNode);
+        } else {
+            labelNode.textContent = title;
+            if (bindLabel) {
+                labelNode.classList.add('checkbox-labeled');
+                labelNode.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    cloneEle.click();
+                });
+            }
+        }
+    },
     toggleCheckAll(ele, total) {
         let checkAll = Util.getElem(ele);
         if (!checkAll) return;

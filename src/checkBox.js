@@ -47,31 +47,12 @@ class CheckBox {
 
             // Handle checkbox title
             let labelSibling = ele.nextElementSibling;
-            let title = ele?.title || ele?.dataset?.checkboxTitle;
             let bindLabel = this.option.bindLabel;
-            let ramainLabel = false,
-                randomID = null;
-            if (labelSibling && labelSibling.tagName === 'LABEL') {
-                title = (() => { // using IIFE
-                    if (!Util.isEmpty(ele.id)) {
-                        if (labelSibling.htmlFor === ele.id) {
-                            bindLabel = ramainLabel = true;
-                            return true;
-                        }
-                        if (labelSibling.dataset?.checkboxFor === ele.id) {
-                            return true;
-                        }
-                    }
-                    if (ele.dataset?.checkboxId && labelSibling.dataset?.checkboxFor === ele.dataset?.checkboxId) {
-                        randomID = Util.isEmpty(ele.id) && Util.isEmpty(labelSibling.htmlFor) ? 'check-' + Util.createUniqueID(6) : null;
-                        return true;
-                    }
-                    return null;
-                })();
-                if (title === true) {
-                    title = labelSibling.textContent;
-                    labelSibling.parentNode.removeChild(labelSibling);
-                }
+            let [title, ramainLabel, randomID] = Util.handleCheckboxTitle(ele, labelSibling);
+            bindLabel = ramainLabel === true ? true : bindLabel;
+            if (title === true) {
+                title = labelSibling.textContent;
+                labelSibling.parentNode.removeChild(labelSibling);
             }
 
             // Handle checkbox checked status
@@ -100,35 +81,11 @@ class CheckBox {
             }
 
             // Insert checkbox
-            let template = Util.getTemplate(this.id);
-            let templateNode = document.createElement('div');
-            templateNode.innerHTML = template.trim();
-            let labelNode = Util.getElem('label', templateNode);
-            let cloneEle = ele.cloneNode(true);
-            if (randomID) {
-                cloneEle.removeAttribute('data-checkbox-id');
-                cloneEle.id = randomID;
-                labelNode.htmlFor = randomID;
-            }
-            if (ramainLabel === true) {
-                labelNode.htmlFor = cloneEle.id;
-            }
-            labelNode.parentNode.insertBefore(cloneEle, labelNode);
+            let [cloneEle, templateNode, labelNode] = Util.insertCheckbox(this.id, ele, randomID, ramainLabel);
             ele.parentNode.replaceChild(templateNode.firstElementChild, ele);
 
             // Insert checkbox title
-            if (title === null) {
-                labelNode.parentNode.removeChild(labelNode);
-            } else {
-                labelNode.textContent = title;
-                if (bindLabel) {
-                    labelNode.classList.add('checkbox-labeled');
-                    labelNode.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        cloneEle.click();
-                    });
-                }
-            }
+            Util.insertCheckboxTitle(title, bindLabel, labelNode, cloneEle);
 
             // Add event listener
             cloneEle.addEventListener('change', (e) => {

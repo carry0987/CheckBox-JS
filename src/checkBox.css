@@ -2,6 +2,7 @@
 .checkbox {
     display: flex;
     align-items: center;
+    margin: 5px 0;
 }
 
 .checkbox input[type="checkbox"],
@@ -11,6 +12,7 @@
     -webkit-appearance: none;
     appearance: none;
     cursor: pointer;
+    margin: 0;
 }
 
 .checkbox input[type="checkbox"]:focus {
@@ -48,12 +50,15 @@
     width: 18px;
     height: 18px;
     margin-top: -2px;
-    margin-right: 5px;
     border: 2px solid #666666;
     border-radius: 2px;
     -webkit-transition: 240ms;
     -o-transition: 240ms;
     transition: 240ms;
+}
+
+.checkbox-label {
+    margin-left: 5px;
 }
 
 .checkbox-labeled {
