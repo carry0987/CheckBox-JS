@@ -11,7 +11,7 @@ export default {
             file: 'dist/checkBox.min.js',
             format: 'umd',
             name: 'CheckBox',
-            // plugins: [terser()],
+            plugins: [terser()],
         }
     ],
     plugins: [
