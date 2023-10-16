@@ -41,16 +41,6 @@ const Util = {
         }
         return evt;
     },
-    removeItem(array, what) {
-        let a = arguments, L = a.length, ax;
-        while (L && array.length) {
-            what = a[--L];
-            while ((ax = array.indexOf(what)) !== -1) {
-                array.splice(ax, 1);
-            }
-        }
-        return array;
-    },
     injectStylesheet(stylesObject, id) {
         let style = document.createElement('style');
         style.id = 'checkbox-style' + id;
@@ -99,9 +89,9 @@ const Util = {
     toggleCheckAll(ele, total) {
         let checkAll = Util.getElem(ele);
         if (!checkAll) return;
-        if (total && total.checked && total.row) {
-            checkAll.checked = (total.checked !== total.row || total.checked === 0) ? false : true;
-            checkAll.setAttribute('checked', checkAll.checked ? 'checked' : null);
+        if (total && total.checked && total.input) {
+            checkAll.checked = (total.checked.length !== total.input.length || total.checked.length === 0) ? false : true;
+            (checkAll.checked) ? checkAll.setAttribute('checked', 'checked') : checkAll.removeAttribute('checked');
         } else {
             checkAll.checked = false;
             checkAll.removeAttribute('checked');

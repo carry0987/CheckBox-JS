@@ -26,10 +26,9 @@ class CheckBox {
         this.allElement = []; // Store all elements here which will be used in destroy method
         this.option = Util.deepMerge({}, CheckBox.defaultOption, option);
         this.total = {
-            checked: [],
-            list: [],
-            input: [],
-            row: 0
+            checked: [], // Store all checked checkbox
+            list: [], // Store all checked checkbox value
+            input: [] // Store all checkbox element
         };
         // Inject stylesheet
         if (this.option?.styles && Object.keys(this.option.styles).length > 0) {
@@ -140,13 +139,8 @@ class CheckBox {
         //Handle checkAll checkbox
         if (this.option?.checkAll) {
             const checkAll = Util.getElem(this.option.checkAll);
-            if (checkAll && this.allElement.length) {
+            if (checkAll) {
                 checkAll.addEventListener('change', (e) => {
-                    const checked = e.target.checked; 
-                    this.allElement.forEach((ele) => {
-                        ele.checked = checked;
-                        checked ? ele.setAttribute('checked', 'checked') : ele.removeAttribute('checked');
-                    });
                     this.checkBoxChange();
                 });
             }
@@ -157,19 +151,20 @@ class CheckBox {
 
     checkBoxChange() {
         const total = this.total;
-        let selector = this.element + ' input[type=checkbox]:checked';
-        total.checked = Array.from(Util.getElem(selector, 'all'));
         total.list = [];
         total.input = [];
-        total.checked.forEach((checkbox) => {
-            total.list.push(checkbox.value);
+        total.checked = [];
+        this.allElement.forEach((checkbox) => {
             total.input.push(checkbox);
+            if (checkbox.checked) {
+                total.list.push(checkbox.value);
+                total.checked.push(checkbox);
+            }
         });
-        total.checked = total.checked.length;
-        selector = this.element + ' input[type=checkbox]';
-        total.row = Util.getElem(selector, 'all').length;
         Util.toggleCheckAll(this.option.checkAll, total);
         this.onChange(total);
+
+        // Dispatch custom event
         const event = Util.createEvent('checkbox-change');
         event.total = total;
         document.dispatchEvent(event);
@@ -190,6 +185,10 @@ class CheckBox {
             element.removeEventListener('change', this.onChange);
             element.removeEventListener('change', this.option.onChange);
         });
+        //Clear all elements
+        this.allElement = [];
+        this.total = {};
+        //Remove stylesheet
         Util.removeStylesheet(this.id);
         CheckBox.instance.splice(this.id, 1);
 
