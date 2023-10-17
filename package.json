@@ -1,6 +1,6 @@
 {
   "name": "@carry0987/check-box",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "A library for create and manage checkbox elements",
   "type": "module",
   "main": "dist/checkBox.min.js",

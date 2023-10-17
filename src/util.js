@@ -58,6 +58,7 @@ const Util = {
     buildRules(ruleObject) {
         let ruleSet = '';
         for (let [property, value] of Object.entries(ruleObject)) {
+            property = property.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`);
             ruleSet += `${property}:${value};`;
         }
         return ruleSet;
@@ -78,6 +79,7 @@ const Util = {
     getTemplate(id) {
         let template = `
         <div class="checkbox check-box-${id}">
+            <span class="checkmark"></span>
             <label class="checkbox-label"></label>
         </div>
         `;
@@ -114,6 +116,7 @@ const Util = {
         let template = Util.getTemplate(id);
         let templateNode = document.createElement('div');
         templateNode.innerHTML = template.trim();
+        let checkmarkNode = Util.getElem('.checkmark', templateNode);
         let labelNode = Util.getElem('label', templateNode);
         let cloneEle = ele.cloneNode(true);
         if (randomID) {
@@ -123,7 +126,11 @@ const Util = {
         if (ramainLabel === true) {
             labelNode.htmlFor = cloneEle.id;
         }
-        labelNode.parentNode.insertBefore(cloneEle, labelNode);
+        checkmarkNode.addEventListener('click', (e) => {
+            e.preventDefault();
+            cloneEle.click();
+        });
+        checkmarkNode.parentNode.insertBefore(cloneEle, checkmarkNode);
         return [cloneEle, templateNode, labelNode];
     },
     insertCheckboxTitle(title, bindLabel, labelNode, cloneEle) {

@@ -31,10 +31,19 @@ class CheckBox {
             input: [] // Store all checkbox element
         };
         // Inject stylesheet
-        if (this.option?.styles && Object.keys(this.option.styles).length > 0) {
-            let styles = Util.deepMerge({}, this.option.styles);
-            Util.injectStylesheet(styles, this.id);
+        let styles = {};
+        if (this.option?.checkMark) {
+            styles = {
+                '.check-box input[type=checkbox] + .checkmark:after': {
+                    'background-image': 'url(' + this.option.checkMark + ')'
+                }
+            };
         }
+        if (this.option?.styles && Object.keys(this.option.styles).length > 0) {
+            styles = Util.deepMerge({}, this.option.styles, styles);
+        }
+        styles && Util.injectStylesheet(styles, this.id);
+
         // Handle onChange event
         this.onChange = (total, target) => {if (this.option?.onChange) this.option.onChange(total, target)};
         this.onCheckAll = (checkedAll) => {if (this.option?.onCheckAll) this.option.onCheckAll(checkedAll)};
@@ -138,6 +147,7 @@ class CheckBox {
         });
         toggleCheckAll && Util.toggleCheckAll(this.option.checkAll, total);
         this.onChange(total, target);
+        target && Util.toggleCheckStatus(target, target.checked);
 
         // Dispatch custom event
         const customEvent = Util.createEvent('checkbox-change');
@@ -176,7 +186,7 @@ class CheckBox {
 CheckBox.version = '__version__';
 CheckBox.instance = [];
 CheckBox.defaultOption = {
-    checkMark: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cG9seWxpbmUgcG9pbnRzPSIyMCA2IDkgMTcgNCAxMiI+PC9wb2x5bGluZT48L3N2Zz4=',
+    checkMark: null, // Image url of the check mark
     checkAll: null, // Selector of the checkbox which is used to check all checkboxes
     onChange: null,
     onCheckAll: null,
