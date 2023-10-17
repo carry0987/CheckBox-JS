@@ -134,7 +134,7 @@ const Util = {
         return [cloneEle, templateNode, labelNode];
     },
     insertCheckboxTitle(title, bindLabel, labelNode, cloneEle) {
-        if (title === null) {
+        if (!title) {
             labelNode.parentNode.removeChild(labelNode);
         } else {
             labelNode.textContent = title;
