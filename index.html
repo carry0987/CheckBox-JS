@@ -38,6 +38,20 @@
             }
         }
     });
+    CheckBox.destroyAll();
+    checkBox = new CheckBox('#app .check-box-list input', {
+        bindLabel: true,
+        checkAll: '#check-all',
+        onChange: (total, target) => {
+            console.log(total);
+            if (target) console.log(target);
+        },
+        styles: {
+            '#check-all ~ label': {
+                fontWeight: 'bold'
+            }
+        }
+    });
     </script>
 </body>
 </html>

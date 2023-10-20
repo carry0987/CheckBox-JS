@@ -5,10 +5,11 @@ import './checkBox.css';
 
 class CheckBox {
     constructor(elements, option = {}) {
+        if (typeof CheckBox.firstLoad === 'undefined') CheckBox.firstLoad = true;
         this.init(elements, option, CheckBox.instance.length);
         CheckBox.instance.push(this);
 
-        if (CheckBox.instance.length === 1) reportInfo('CheckBox is loaded, version:' + CheckBox.version);
+        if (CheckBox.instance.length === 1 && CheckBox.firstLoad === true) reportInfo('CheckBox is loaded, version:' + CheckBox.version);
     }
 
     static destroyAll() {
@@ -105,6 +106,8 @@ class CheckBox {
         if (this.option?.checkAll) {
             const checkAll = Util.getElem(this.option.checkAll);
             if (checkAll && checkAll?.type === 'checkbox') {
+                if (checkAll.hasAttribute('data-checkbox')) return;
+                checkAll.setAttribute('data-checkbox', 'true');
                 let labelSibling = checkAll.nextElementSibling;
                 let bindLabel = this.option?.bindLabel;
                 let [title, ramainLabel, randomID] = Util.handleCheckboxTitle(checkAll, labelSibling);
@@ -164,13 +167,21 @@ class CheckBox {
     }
 
     destroy() {
+        CheckBox.firstLoad = false;
         // Remove event listeners from all elements
         this.allElement.forEach(element => {
             element.removeEventListener('change', element.checkBoxChange);
+            element.checkBoxChange = null;
+            element.removeAttribute('data-checkbox');
+            // Replace div.checkbox with element
+            element.parentNode.parentNode.replaceChild(element, element.parentNode);
         });
         // Clear the checkAll event if it is used
         if (this.checkAll) {
             this.checkAll.removeEventListener('change', this.checkAll.checkAllChange);
+            this.checkAll.checkAllChange = null;
+            this.checkAll.removeAttribute('data-checkbox');
+            this.checkAll.parentNode.parentNode.replaceChild(this.checkAll, this.checkAll.parentNode);
         }
         // Clear all elements
         this.allElement = [];
