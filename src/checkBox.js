@@ -172,27 +172,12 @@ class CheckBox {
         CheckBox.firstLoad = false;
         // Remove event listeners from all elements
         this.allElement.forEach(element => {
-            element.removeEventListener('change', element.checkBoxChange);
-            element.checkBoxChange = null;
-            element.removeAttribute('data-checkbox');
-            let parentElement = element.parentNode;
-            parentElement.replaceWith(element);
-            let labelNode = element.isValidLabel;
-            if (labelNode && labelNode.nodeType === Node.ELEMENT_NODE) {
-                element.parentNode.insertBefore(labelNode, element.nextSibling);
-            }
+            Util.restoreElement(element);
         });
         // Clear the checkAll event if it is used
         if (this.checkAll) {
-            this.checkAll.removeEventListener('change', this.checkAll.checkAllChange);
-            this.checkAll.checkAllChange = null;
-            this.checkAll.removeAttribute('data-checkbox');
-            let parentElement = this.checkAll.parentNode;
-            parentElement.replaceWith(this.checkAll);
-            let labelNode = this.checkAll.isValidLabel;
-            if (labelNode && labelNode.nodeType === Node.ELEMENT_NODE) {
-                this.checkAll.parentNode.insertBefore(labelNode, this.checkAll.nextSibling);
-            }
+            Util.toggleCheckAll(this.checkAll, false);
+            Util.restoreElement(this.checkAll);
         }
         // Clear all elements
         this.allElement = [];

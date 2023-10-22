@@ -164,6 +164,17 @@ const Util = {
         } else {
             Util.toggleCheckStatus(checkAll, false);
         }
+    },
+    restoreElement(element) {
+        element.removeEventListener('change', element.checkBoxChange);
+        element.checkBoxChange = null;
+        element.removeAttribute('data-checkbox');
+        let parentElement = element.parentNode;
+        parentElement.replaceWith(element);
+        let labelNode = element.isValidLabel;
+        if (labelNode && labelNode.nodeType === Node.ELEMENT_NODE) {
+            element.parentNode.insertBefore(labelNode, element.nextSibling);
+        }
     }
 };
 
