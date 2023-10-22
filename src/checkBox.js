@@ -193,6 +193,7 @@ class CheckBox {
 CheckBox.version = '__version__';
 CheckBox.instance = [];
 CheckBox.defaultOption = {
+    checked: null, // Default checked checkbox, can be boolean, string, number or array
     checkMark: null, // Image url of the check mark
     checkAll: null, // Selector of the checkbox which is used to check all checkboxes
     onChange: null,
