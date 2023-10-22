@@ -47,7 +47,7 @@ const Util = {
         style.appendChild(document.createTextNode(''));
         document.head.appendChild(style);
 
-        let stylesheet = document.styleSheets[document.styleSheets.length - 1];
+        let stylesheet = style.sheet;
 
         for (let selector in stylesObject) {
             if (stylesObject.hasOwnProperty(selector)) {
