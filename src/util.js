@@ -89,10 +89,11 @@ const Util = {
         return (!str?.length);
     },
     handleCheckboxTitle(ele, labelSibling) {
-        let ramainLabel = false, randomID = null;
+        let ramainLabel = false, randomID = null, isValidLabel = false;
         let title = ele?.title || ele?.dataset?.checkboxTitle;
 
         if (labelSibling && labelSibling.tagName === 'LABEL') {
+            isValidLabel = labelSibling.cloneNode(true);
             title = (() => { // using IIFE
                 if (!Util.isEmpty(ele.id)) {
                     if (labelSibling?.htmlFor === ele.id) {
@@ -110,7 +111,7 @@ const Util = {
                 return null;
             })();
         }
-        return [title, ramainLabel, randomID];
+        return [title, ramainLabel, randomID, isValidLabel];
     },
     insertCheckbox(id, ele, randomID, ramainLabel) {
         let template = Util.getTemplate(id);
@@ -120,7 +121,6 @@ const Util = {
         let labelNode = Util.getElem('label', templateNode);
         let cloneEle = ele.cloneNode(true);
         if (randomID) {
-            cloneEle.removeAttribute('data-checkbox-id');
             cloneEle.id = randomID;
         }
         if (ramainLabel === true) {

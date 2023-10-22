@@ -58,7 +58,7 @@ class CheckBox {
             // Handle checkbox title
             let labelSibling = ele.nextElementSibling;
             let bindLabel = this.option.bindLabel;
-            let [title, ramainLabel, randomID] = Util.handleCheckboxTitle(ele, labelSibling);
+            let [title, ramainLabel, randomID, isValidLabel] = Util.handleCheckboxTitle(ele, labelSibling);
             bindLabel = ramainLabel === true ? true : bindLabel;
             if (title === true) {
                 title = labelSibling.textContent;
@@ -100,6 +100,7 @@ class CheckBox {
             cloneEle.checkBoxChange = checkBoxChange;
 
             // Store each checkbox element
+            cloneEle.isValidLabel = isValidLabel;
             this.allElement.push(cloneEle);
         });
         // Handle checkAll checkbox
@@ -110,7 +111,7 @@ class CheckBox {
                 checkAll.setAttribute('data-checkbox', 'true');
                 let labelSibling = checkAll.nextElementSibling;
                 let bindLabel = this.option?.bindLabel;
-                let [title, ramainLabel, randomID] = Util.handleCheckboxTitle(checkAll, labelSibling);
+                let [title, ramainLabel, randomID, isValidLabel] = Util.handleCheckboxTitle(checkAll, labelSibling);
                 bindLabel = ramainLabel === true ? true : bindLabel;
                 if (title === true) {
                     title = labelSibling.textContent;
@@ -129,6 +130,7 @@ class CheckBox {
                 }).bind(this);
                 cloneEle.addEventListener('change', checkAllChange);
                 cloneEle.checkAllChange = checkAllChange;
+                cloneEle.isValidLabel = isValidLabel;
                 this.checkAll = cloneEle;
             }
         }
@@ -173,15 +175,24 @@ class CheckBox {
             element.removeEventListener('change', element.checkBoxChange);
             element.checkBoxChange = null;
             element.removeAttribute('data-checkbox');
-            // Replace div.checkbox with element
-            element.parentNode.parentNode.replaceChild(element, element.parentNode);
+            let parentElement = element.parentNode;
+            parentElement.replaceWith(element);
+            let labelNode = element.isValidLabel;
+            if (labelNode && labelNode.nodeType === Node.ELEMENT_NODE) {
+                element.parentNode.insertBefore(labelNode, element.nextSibling);
+            }
         });
         // Clear the checkAll event if it is used
         if (this.checkAll) {
             this.checkAll.removeEventListener('change', this.checkAll.checkAllChange);
             this.checkAll.checkAllChange = null;
             this.checkAll.removeAttribute('data-checkbox');
-            this.checkAll.parentNode.parentNode.replaceChild(this.checkAll, this.checkAll.parentNode);
+            let parentElement = this.checkAll.parentNode;
+            parentElement.replaceWith(this.checkAll);
+            let labelNode = this.checkAll.isValidLabel;
+            if (labelNode && labelNode.nodeType === Node.ELEMENT_NODE) {
+                this.checkAll.parentNode.insertBefore(labelNode, this.checkAll.nextSibling);
+            }
         }
         // Clear all elements
         this.allElement = [];
