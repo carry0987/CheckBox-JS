@@ -1,4 +1,4 @@
-import Util from './util';
+import Utils from './utils-ext';
 import throwError from './error';
 import reportInfo from './report';
 import './checkBox.css';
@@ -20,12 +20,12 @@ class CheckBox {
     }
 
     init(elements, option, id) {
-        let elem = Util.getElem(elements, 'all');
+        let elem = Utils.getElem(elements, 'all');
         if (!elem || elem.length < 1) throwError('Cannot find elements : ' + elements);
         this.id = id;
         this.element = elements;
         this.allElement = []; // Store all elements here which will be used in destroy method
-        this.option = Util.deepMerge({}, CheckBox.defaultOption, option);
+        this.option = Utils.deepMerge({}, CheckBox.defaultOption, option);
         this.total = {
             checked: [], // Store all checked checkbox
             list: [], // Store all checked checkbox value
@@ -41,9 +41,9 @@ class CheckBox {
             };
         }
         if (this.option?.styles && Object.keys(this.option.styles).length > 0) {
-            styles = Util.deepMerge({}, this.option.styles, styles);
+            styles = Utils.deepMerge({}, this.option.styles, styles);
         }
-        styles && Util.injectStylesheet(styles, this.id);
+        styles && Utils.injectStylesheet(styles, this.id);
 
         // Handle onChange event
         this.onChange = (total, target) => {if (this.option?.onChange) this.option.onChange(total, target)};
@@ -58,7 +58,7 @@ class CheckBox {
             // Handle checkbox title
             let labelSibling = ele.nextElementSibling;
             let bindLabel = this.option.bindLabel;
-            let [title, ramainLabel, randomID, isValidLabel] = Util.handleCheckboxTitle(ele, labelSibling);
+            let [title, ramainLabel, randomID, isValidLabel] = Utils.handleCheckboxTitle(ele, labelSibling);
             bindLabel = ramainLabel === true ? true : bindLabel;
             if (title === true) {
                 title = labelSibling.textContent;
@@ -67,32 +67,32 @@ class CheckBox {
 
             // Handle checkbox checked status
             if (ele.checked) {
-                Util.toggleCheckStatus(ele, true);
+                Utils.toggleCheckStatus(ele, true);
             } else {
                 if (this.option?.checked) {
                     if (typeof this.option.checked === 'boolean' && elem.length === 1) {
-                        Util.toggleCheckStatus(ele, true);
+                        Utils.toggleCheckStatus(ele, true);
                     }
                     if ((ele?.value === this.option.checked) || (index === this.option.checked)) {
-                        Util.toggleCheckStatus(ele, true);
+                        Utils.toggleCheckStatus(ele, true);
                     }
                     if (typeof this.option.checked === 'string') {
                         this.option.checked = [this.option.checked];
                     }
                     if (Array.isArray(this.option.checked)) {
                         if (this.option.checked.includes(ele.name) || this.option.checked.includes(ele.id)) {
-                            Util.toggleCheckStatus(ele, true);
+                            Utils.toggleCheckStatus(ele, true);
                         }
                     }
                 }
             }
 
             // Insert checkbox
-            let [cloneEle, templateNode, labelNode] = Util.insertCheckbox(this.id, ele, randomID, ramainLabel);
+            let [cloneEle, templateNode, labelNode] = Utils.insertCheckbox(this.id, ele, randomID, ramainLabel);
             ele.parentNode.replaceChild(templateNode.firstElementChild, ele);
 
             // Insert checkbox title
-            Util.insertCheckboxTitle(title, bindLabel, labelNode, cloneEle);
+            Utils.insertCheckboxTitle(title, bindLabel, labelNode, cloneEle);
 
             // Add event listener
             let checkBoxChange = this.checkBoxChange.bind(this, true, cloneEle);
@@ -105,25 +105,25 @@ class CheckBox {
         });
         // Handle checkAll checkbox
         if (this.option?.checkAll) {
-            const checkAll = Util.getElem(this.option.checkAll);
+            const checkAll = Utils.getElem(this.option.checkAll);
             if (checkAll && checkAll?.type === 'checkbox') {
                 if (checkAll.hasAttribute('data-checkbox')) return;
                 checkAll.setAttribute('data-checkbox', 'true');
                 let labelSibling = checkAll.nextElementSibling;
                 let bindLabel = this.option?.bindLabel;
-                let [title, ramainLabel, randomID, isValidLabel] = Util.handleCheckboxTitle(checkAll, labelSibling);
+                let [title, ramainLabel, randomID, isValidLabel] = Utils.handleCheckboxTitle(checkAll, labelSibling);
                 bindLabel = ramainLabel === true ? true : bindLabel;
                 if (title === true) {
                     title = labelSibling.textContent;
                     labelSibling.parentNode.removeChild(labelSibling);
                 }
-                let [cloneEle, templateNode, labelNode] = Util.insertCheckbox(this.id, checkAll, randomID, ramainLabel);
+                let [cloneEle, templateNode, labelNode] = Utils.insertCheckbox(this.id, checkAll, randomID, ramainLabel);
                 checkAll.parentNode.replaceChild(templateNode.firstElementChild, checkAll);
-                Util.insertCheckboxTitle(title, bindLabel, labelNode, cloneEle);
+                Utils.insertCheckboxTitle(title, bindLabel, labelNode, cloneEle);
                 let checkAllChange = ((e) => {
                     const checkedAll = e.target.checked;
                     this.allElement.forEach((checkbox) => {
-                        Util.toggleCheckStatus(checkbox, checkedAll);
+                        Utils.toggleCheckStatus(checkbox, checkedAll);
                     });
                     this.checkBoxChange(false);
                     this.onCheckAll(checkedAll);
@@ -150,12 +150,12 @@ class CheckBox {
                 total.checked.push(checkbox);
             }
         });
-        toggleCheckAll && Util.toggleCheckAll(this.option.checkAll, total);
+        toggleCheckAll && Utils.toggleCheckAll(this.option.checkAll, total);
         this.onChange(total, target);
-        target && Util.toggleCheckStatus(target, target.checked);
+        target && Utils.toggleCheckStatus(target, target.checked);
 
         // Dispatch custom event
-        const customEvent = Util.createEvent('checkbox-change');
+        const customEvent = Utils.createEvent('checkbox-change');
         customEvent.total = total;
         document.dispatchEvent(customEvent);
     }
@@ -172,18 +172,18 @@ class CheckBox {
         CheckBox.firstLoad = false;
         // Remove event listeners from all elements
         this.allElement.forEach(element => {
-            Util.restoreElement(element);
+            Utils.restoreElement(element);
         });
         // Clear the checkAll event if it is used
         if (this.checkAll) {
-            Util.toggleCheckAll(this.checkAll, false);
-            Util.restoreElement(this.checkAll);
+            Utils.toggleCheckAll(this.checkAll, false);
+            Utils.restoreElement(this.checkAll);
         }
         // Clear all elements
         this.allElement = [];
         this.total = {};
         // Remove stylesheet
-        Util.removeStylesheet(this.id);
+        Utils.removeStylesheet(this.id);
         CheckBox.instance.splice(this.id, 1);
 
         return this;
