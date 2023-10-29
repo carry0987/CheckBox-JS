@@ -4,7 +4,6 @@ import reportInfo from './report';
 Utils.setStylesheetId = 'checkbox-style';
 Utils.setReplaceRule('.check-box', '.check-box-');
 
-
 Utils.getTemplate = function(id) {
     let template = `
     <div class="checkbox check-box-${id}">
