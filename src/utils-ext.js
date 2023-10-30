@@ -31,7 +31,7 @@ Utils.handleCheckboxTitle = function(ele, labelSibling) {
                 }
             }
             if (ele?.dataset?.checkboxId && labelSibling?.dataset?.checkboxFor === ele?.dataset?.checkboxId) {
-                randomID = Utils.isEmpty(ele.id) && Utils.isEmpty(labelSibling.htmlFor) ? 'check-' + Utils.createUniqueID(6) : null;
+                randomID = Utils.isEmpty(ele.id) && Utils.isEmpty(labelSibling.htmlFor) ? 'check-' + Utils.generateRandom(6) : null;
                 return true;
             }
             return null;
@@ -107,7 +107,5 @@ Utils.restoreElement = function(element) {
         element.parentNode.insertBefore(labelNode, element.nextSibling);
     }
 }
-
-Utils.createUniqueID = Utils.generateRandom;
 
 export default Utils;
