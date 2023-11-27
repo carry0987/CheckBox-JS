@@ -1,5 +1,4 @@
 import Utils from './utils-ext';
-import throwError from './error';
 import reportInfo from './report';
 import './checkBox.css';
 
@@ -21,7 +20,7 @@ class CheckBox {
 
     init(elements, option, id) {
         let elem = Utils.getElem(elements, 'all');
-        if (!elem || elem.length < 1) throwError('Cannot find elements : ' + elements);
+        if (!elem || elem.length < 1) Utils.throwError('Cannot find elements : ' + elements);
         this.id = id;
         this.element = elements;
         this.allElement = []; // Store all elements here which will be used in destroy method
