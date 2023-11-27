@@ -1,4 +1,4 @@
-import { domUtils, errorUtils, setStylesheetId, setReplaceRule, isEmpty, deepMerge, generateRandom, injectStylesheet, removeStylesheet } from '@carry0987/utils';
+import { domUtils, eventUtils, errorUtils, setStylesheetId, setReplaceRule, isEmpty, deepMerge, generateRandom, injectStylesheet, removeStylesheet } from '@carry0987/utils';
 
 class Utils {
     static throwError = errorUtils.throwError;
@@ -8,6 +8,8 @@ class Utils {
     static removeStylesheet = removeStylesheet;
     static setStylesheetId = setStylesheetId;
     static setReplaceRule = setReplaceRule;
+    static createEvent = eventUtils.createEvent;
+    static dispatchEvent = eventUtils.dispatchEvent;
 
     static getTemplate = function(id) {
         let template = `

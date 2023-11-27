@@ -154,9 +154,8 @@ class CheckBox {
         target && Utils.toggleCheckStatus(target, target.checked);
 
         // Dispatch custom event
-        const customEvent = Utils.createEvent('checkbox-change');
-        customEvent.total = total;
-        document.dispatchEvent(customEvent);
+        const customEvent = Utils.createEvent('checkbox-change', { detail: total });
+        Utils.dispatchEvent(customEvent);
     }
 
     getCheckBox() {
