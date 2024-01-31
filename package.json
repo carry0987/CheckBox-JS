@@ -1,6 +1,6 @@
 {
   "name": "@carry0987/check-box",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "A library for create and manage checkbox elements",
   "type": "module",
   "main": "dist/checkBox.min.js",
@@ -26,11 +26,11 @@
   },
   "homepage": "https://github.com/carry0987/CheckBox-JS#readme",
   "devDependencies": {
-    "@carry0987/utils": "^3.1.0",
+    "@carry0987/utils": "^3.2.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-replace": "^5.0.5",
     "@rollup/plugin-terser": "^0.4.4",
-    "rollup": "^4.6.0",
+    "rollup": "^4.9.6",
     "rollup-plugin-postcss": "^4.0.2"
   }
 }

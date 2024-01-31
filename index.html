@@ -14,7 +14,7 @@
 <body>
     <div id="app">
         <h1>Normal CheckBox</h1>
-        <input type="checkbox" id="check-all" title="Check All">
+        <input type="checkbox" id="check-all" title="Check All" checked>
         <div class="check-box-list">
             <input type="checkbox" name="check-no-title">
             <input type="checkbox" name="check-1" data-checkbox-id="check-1" value="Test-1">
@@ -29,6 +29,10 @@
         bindLabel: true,
         checkAll: '#check-all',
         onChange: (total, target) => {
+            console.log(total);
+            if (target) console.log(target);
+        },
+        onCheckAll: (total, target) => {
             console.log(total);
             if (target) console.log(target);
         },

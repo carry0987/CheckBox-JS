@@ -1,8 +1,8 @@
-import { domUtils, eventUtils, errorUtils, setStylesheetId, setReplaceRule, isEmpty, deepMerge, generateRandom, injectStylesheet, removeStylesheet } from '@carry0987/utils';
+import { getElem, createElem, eventUtils, errorUtils, setStylesheetId, setReplaceRule, isEmpty, deepMerge, generateRandom, injectStylesheet, removeStylesheet } from '@carry0987/utils';
 
 class Utils {
     static throwError = errorUtils.throwError;
-    static getElem = domUtils.getElem;
+    static getElem = getElem;
     static deepMerge = deepMerge;
     static injectStylesheet = injectStylesheet;
     static removeStylesheet = removeStylesheet;
@@ -49,10 +49,10 @@ class Utils {
     
     static insertCheckbox = function(id, ele, randomID, ramainLabel) {
         let template = Utils.getTemplate(id);
-        let templateNode = domUtils.createElem('div');
+        let templateNode = createElem('div');
         templateNode.innerHTML = template.trim();
-        let checkmarkNode = domUtils.getElem('.checkmark', templateNode);
-        let labelNode = domUtils.getElem('label', templateNode);
+        let checkmarkNode = getElem('.checkmark', templateNode);
+        let labelNode = getElem('label', templateNode);
         let cloneEle = ele.cloneNode(true);
         if (randomID) {
             cloneEle.id = randomID;
@@ -94,7 +94,7 @@ class Utils {
     }
     
     static toggleCheckAll = function(ele, total) {
-        let checkAll = domUtils.getElem(ele);
+        let checkAll = getElem(ele);
         if (!checkAll) return;
         if (total && total.checked && total.input) {
             Utils.toggleCheckStatus(checkAll, (total.checked.length !== total.input.length || total.checked.length === 0) === false);

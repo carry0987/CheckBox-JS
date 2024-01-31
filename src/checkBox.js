@@ -131,6 +131,10 @@ class CheckBox {
                 cloneEle.checkAllChange = checkAllChange;
                 cloneEle.isValidLabel = isValidLabel;
                 this.checkAll = cloneEle;
+                if (this.option.checked === true || checkAll.checked === true) {
+                    Utils.toggleCheckStatus(cloneEle, true);
+                    cloneEle.dispatchEvent(new Event('change'));
+                }
             }
         }
 
