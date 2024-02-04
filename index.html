@@ -42,6 +42,10 @@
             }
         }
     });
+    checkBox.onChange = (total, target) => {
+        console.log('Total: ', total);
+        if (target) console.log(target);
+    };
     // CheckBox.destroyAll();
     // checkBox = new CheckBox('#app .check-box-list input', {
     //     bindLabel: true,

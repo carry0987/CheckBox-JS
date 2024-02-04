@@ -111,11 +111,11 @@ class CheckBox {
         // Add event listener
         let checkBoxChange = this.checkBoxChange.bind(this, true, cloneEle);
         cloneEle.addEventListener('change', checkBoxChange);
-        cloneEle.checkBoxChange = checkBoxChange; // Cast as 'any' to workaround the property does not exist on HTMLElement
+        cloneEle.checkBoxChange = checkBoxChange;
         this.allElement.push(cloneEle);
 
         // Store label
-        cloneEle.labelToRestore = labelToRestore; // Cast as 'any' to workaround the property does not exist on HTMLElement
+        cloneEle.labelToRestore = labelToRestore;
     }
 
     private updateCheckboxCheckedStatus(ele: HTMLInputElement, index: number): void {
@@ -178,8 +178,8 @@ class CheckBox {
         };
 
         cloneEle.addEventListener('change', checkAllChange);
-        cloneEle.checkAllChange = checkAllChange; // Cast as 'any' to store custom property
-        cloneEle.labelToRestore = labelToRestore; // Cast as 'any' to store custom property
+        cloneEle.checkAllChange = checkAllChange;
+        cloneEle.labelToRestore = labelToRestore;
 
         // Update the stored check all element property
         this.checkAllElement = cloneEle;
@@ -233,17 +233,25 @@ class CheckBox {
     }
 
     private destroy(): void {
+        // Reset firstLoad flag
+        CheckBox.firstLoad = false;
         // Remove event listeners from all elements
         this.allElement.forEach(element => {
-            if (element.checkBoxChange) {
-                element.removeEventListener('change', element.checkBoxChange);
-            }
+            Utils.restoreElement(element);
         });
 
         // Clear the checkAll event if it exists
         if (this.checkAllElement && this.checkAllElement.checkAllChange) {
-            this.checkAllElement.removeEventListener('change', this.checkAllElement.checkAllChange);
+            Utils.toggleCheckAll(this.checkAllElement);
+            Utils.restoreElement(this.checkAllElement);
         }
+
+        // Reset instance variables
+        this.element = null;
+        this.options = {};
+        this.allElement = [];
+        this.total = { input: [], checked: [], list: [] };
+        this.checkAllElement = undefined;
 
         // Remove any injected stylesheets
         Utils.removeStylesheet(this.id.toString());
@@ -253,13 +261,6 @@ class CheckBox {
         if (index !== -1) {
             CheckBox.instances.splice(index, 1);
         }
-
-        // Reset instance variables
-        this.element = null;
-        this.options = {};
-        this.allElement = [];
-        this.total = { input: [], checked: [], list: [] };
-        this.checkAllElement = undefined;
     }
 
     // Methods for external use

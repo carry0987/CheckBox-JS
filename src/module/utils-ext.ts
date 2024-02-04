@@ -79,9 +79,11 @@ class Utils {
         templateNode.innerHTML = template.trim();
         let checkmarkNode = getElem('.checkmark', templateNode) as HTMLElement;
         let labelNode = getElem('label', templateNode) as HTMLLabelElement;
-        let cloneEle = ele.cloneNode(true) as HTMLInputElement;
+        let cloneEle = ele.cloneNode(true) as EnhancedElement;
+        cloneEle.withID = true;
         if (randomID) {
             cloneEle.id = randomID;
+            cloneEle.withID = false;
         }
         if (remainLabel === true) {
             labelNode.htmlFor = cloneEle.id;
@@ -127,14 +129,13 @@ class Utils {
         }
     }
 
-    static toggleCheckAll(ele: string, total: TotalCheckbox): void {
+    static toggleCheckAll(ele: string | EnhancedElement, total?: TotalCheckbox): void {
         let checkAll = getElem(ele) as HTMLInputElement;
         if (!checkAll) return;
         if (total && total.checked && total.input) {
             Utils.toggleCheckStatus(
                 checkAll,
-                (total.checked.length !== total.input.length ||
-                    total.checked.length === 0) === false
+                (total.checked.length !== total.input.length || total.checked.length === 0) === false
             );
         } else {
             Utils.toggleCheckStatus(checkAll, false);
@@ -145,13 +146,15 @@ class Utils {
         if (typeof element.checkBoxChange === 'function') {
             element.removeEventListener('change', element.checkBoxChange);
         }
+        if (element.withID === false) {
+            element.removeAttribute('id');
+        }
         element.checkBoxChange = undefined;
         element.removeAttribute('data-checkbox');
         if (element.parentNode) {
-            let parentElement = element.parentNode;
-            parentElement.replaceChild(element, element);
+            let parentElement = element.parentNode as HTMLElement;
+            parentElement.replaceWith(element);
         }
-        
         let labelNode = element.labelToRestore;
         if (labelNode && labelNode.nodeType === Node.ELEMENT_NODE) {
             element.parentNode?.insertBefore(labelNode, element.nextSibling);

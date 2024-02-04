@@ -36,6 +36,7 @@ export interface CheckboxTemplate {
 }
 
 export interface EnhancedElement extends HTMLInputElement {
+    withID: boolean;
     checkAllChange?: EventListener;
     checkBoxChange?: EventListener;
     labelToRestore?: HTMLLabelElement;
