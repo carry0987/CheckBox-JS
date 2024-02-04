@@ -17,25 +17,26 @@ export interface CheckBoxOption {
 }
 
 export interface TotalCheckbox {
-    checked: HTMLInputElement[];
-    list: string[];
-    input: HTMLInputElement[];
+    input: HTMLInputElement[]; // Store all checkbox element
+    checked: HTMLInputElement[]; // Store all checked checkbox
+    list: string[]; // Store all checked checkbox value
 }
 
 export interface CheckboxTitleDetails {
     title: string | null;
     remainLabel: boolean;
     randomID: string | null;
-    isValidLabel: boolean;
+    labelToRestore?: HTMLLabelElement;
 }
 
 export interface CheckboxTemplate {
-    cloneEle: HTMLInputElement;
+    cloneEle: EnhancedElement;
     templateNode: HTMLDivElement;
     labelNode: HTMLLabelElement;
 }
 
-export interface EnhancedElement extends HTMLElement {
+export interface EnhancedElement extends HTMLInputElement {
+    checkAllChange?: EventListener;
     checkBoxChange?: EventListener;
-    isValidLabel?: HTMLElement;
+    labelToRestore?: HTMLLabelElement;
 }

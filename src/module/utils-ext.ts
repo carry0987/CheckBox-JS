@@ -43,9 +43,11 @@ class Utils {
         labelSibling: HTMLElement | null
     ): CheckboxTitleDetails {
         let title: string | null = null;
+        let checkBoxId: string | null = ele.getAttribute('data-checkbox-id');
         let remainLabel: boolean = false;
         let randomID: string | null = null;
         let isValidLabel: boolean = false;
+        let labelToRestore: HTMLLabelElement | undefined;
 
         // Check if title is available in element's title attribute or data-checkbox-title.
         title = ele.getAttribute('title') || ele.getAttribute('data-checkbox-title');
@@ -59,15 +61,21 @@ class Utils {
                     isValidLabel = true;
                 }
             }
-            // If no ID is available, or the label is not properly associated, generate a random ID.
-            if (Utils.isEmpty(ele.id) || !isValidLabel) {
-                randomID = 'check-' + Utils.generateRandom(6);
+            if (!Utils.isEmpty(checkBoxId) && labelSibling.getAttribute('data-checkbox-for') === checkBoxId) {
+                randomID = isEmpty(ele.id) && isEmpty(labelSibling.htmlFor) ? 'check-' + generateRandom(6) : null;
             }
             // Clone the label element if it's valid.
             isValidLabel = !Utils.isEmpty(labelSibling.htmlFor) || isValidLabel;
+            if (isValidLabel) {
+                labelToRestore = labelSibling.cloneNode(true) as HTMLLabelElement;
+            }
+            // Set title
+            if (isValidLabel || remainLabel || randomID) {
+                title = labelSibling.textContent;
+            }
         }
 
-        return {title, remainLabel, randomID, isValidLabel};
+        return {title, remainLabel, randomID, labelToRestore};
     }
 
     static insertCheckbox(
@@ -154,7 +162,7 @@ class Utils {
             parentElement.replaceChild(element, element);
         }
         
-        let labelNode = element.isValidLabel;
+        let labelNode = element.labelToRestore;
         if (labelNode && labelNode.nodeType === Node.ELEMENT_NODE) {
             element.parentNode?.insertBefore(labelNode, element.nextSibling);
         }
