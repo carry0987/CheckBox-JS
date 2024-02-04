@@ -149,7 +149,7 @@ class Utils {
         }
         element.checkBoxChange = undefined;
         element.removeAttribute('data-checkbox');
-        if (element.parentNode && element instanceof ChildNode) {
+        if (element.parentNode) {
             let parentElement = element.parentNode;
             parentElement.replaceChild(element, element);
         }
