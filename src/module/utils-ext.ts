@@ -42,40 +42,30 @@ class Utils {
         ele: HTMLElement, 
         labelSibling: HTMLElement | null
     ): CheckboxTitleDetails {
-        let title: string | null = null;
-        let checkBoxId: string | null = ele.getAttribute('data-checkbox-id');
+        let title: string | null = ele.getAttribute('title') || ele.getAttribute('data-checkbox-title');
         let remainLabel: boolean = false;
         let randomID: string | null = null;
         let isValidLabel: boolean = false;
         let labelToRestore: HTMLLabelElement | undefined;
 
-        // Check if title is available in element's title attribute or data-checkbox-title.
-        title = ele.getAttribute('title') || ele.getAttribute('data-checkbox-title');
-
-        // Check for existing label
-        if (labelSibling instanceof HTMLLabelElement && labelSibling.tagName === 'LABEL') {
-            if (!Utils.isEmpty(ele.id)) {
-                if (labelSibling.htmlFor === ele.id) {
-                    remainLabel = true;
-                } else if (labelSibling.getAttribute('data-checkbox-for') === ele.id) {
-                    isValidLabel = true;
-                }
+        if (labelSibling instanceof HTMLLabelElement) {
+            const htmlFor = labelSibling.htmlFor;
+            const dataCheckboxFor = labelSibling.dataset.checkboxFor;
+            const dataCheckboxId = ele.dataset.checkboxId;
+            remainLabel = !Utils.isEmpty(ele.id) && htmlFor === ele.id;
+            isValidLabel = !Utils.isEmpty(ele.id) && (dataCheckboxFor === ele.id);
+            if (!Utils.isEmpty(dataCheckboxId) && dataCheckboxFor === dataCheckboxId) {
+                randomID = Utils.isEmpty(ele.id) && Utils.isEmpty(htmlFor) ? 'check-' + Utils.generateRandom(6) : null;
+                isValidLabel = true;
             }
-            if (!Utils.isEmpty(checkBoxId) && labelSibling.getAttribute('data-checkbox-for') === checkBoxId) {
-                randomID = isEmpty(ele.id) && isEmpty(labelSibling.htmlFor) ? 'check-' + generateRandom(6) : null;
-            }
-            // Clone the label element if it's valid.
-            isValidLabel = !Utils.isEmpty(labelSibling.htmlFor) || isValidLabel;
-            if (isValidLabel) {
+            if (isValidLabel || remainLabel) {
                 labelToRestore = labelSibling.cloneNode(true) as HTMLLabelElement;
-            }
-            // Set title
-            if (isValidLabel || remainLabel || randomID) {
-                title = labelSibling.textContent;
+                // Prefer the explicitly set title, fall back to text from the label.
+                title = title || labelSibling.textContent;
             }
         }
 
-        return {title, remainLabel, randomID, labelToRestore};
+        return { title, remainLabel, randomID, labelToRestore };
     }
 
     static insertCheckbox(
