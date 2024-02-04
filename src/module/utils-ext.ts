@@ -11,16 +11,18 @@ import {
     injectStylesheet,
     removeStylesheet,
 } from '@carry0987/utils';
-import { TotalCheckbox } from '../interface/interfaces';
+import { TotalCheckbox, CheckboxTitleDetails, CheckboxTemplate, EnhancedElement } from '../interface/interfaces';
 
 class Utils {
     static throwError = errorUtils.throwError;
     static getElem = getElem;
     static deepMerge = deepMerge;
+    static generateRandom = generateRandom;
     static injectStylesheet = injectStylesheet;
     static removeStylesheet = removeStylesheet;
     static setStylesheetId = setStylesheetId;
     static setReplaceRule = setReplaceRule;
+    static isEmpty = isEmpty;
     static createEvent = eventUtils.createEvent;
     static dispatchEvent = eventUtils.dispatchEvent;
 
@@ -37,52 +39,45 @@ class Utils {
     }
 
     static handleCheckboxTitle(
-        ele: Element,
+        ele: HTMLElement, 
         labelSibling: HTMLElement | null
-    ): [string | null, boolean, string | null, boolean] {
-        let ramainLabel = false,
-            randomID = null,
-            isValidLabel = false;
-        let title = ele?.title || ele?.dataset?.checkboxTitle;
+    ): CheckboxTitleDetails {
+        let title: string | null = null;
+        let remainLabel: boolean = false;
+        let randomID: string | null = null;
+        let isValidLabel: boolean = false;
 
-        if (labelSibling && labelSibling.tagName === 'LABEL') {
-            isValidLabel = labelSibling.cloneNode(true);
-            title = (() => {
-                // using IIFE
-                if (!isEmpty(ele.id)) {
-                    if (labelSibling?.htmlFor === ele.id) {
-                        ramainLabel = true;
-                        return true;
-                    }
-                    if (labelSibling?.dataset?.checkboxFor === ele.id) {
-                        return true;
-                    }
+        // Check if title is available in element's title attribute or data-checkbox-title.
+        title = ele.getAttribute('title') || ele.getAttribute('data-checkbox-title');
+
+        // Check for existing label
+        if (labelSibling instanceof HTMLLabelElement && labelSibling.tagName === 'LABEL') {
+            if (!Utils.isEmpty(ele.id)) {
+                if (labelSibling.htmlFor === ele.id) {
+                    remainLabel = true;
+                } else if (labelSibling.getAttribute('data-checkbox-for') === ele.id) {
+                    isValidLabel = true;
                 }
-                if (
-                    ele?.dataset?.checkboxId &&
-                    labelSibling?.dataset?.checkboxFor ===
-                        ele?.dataset?.checkboxId
-                ) {
-                    randomID =
-                        isEmpty(ele.id) && isEmpty(labelSibling.htmlFor)
-                            ? 'check-' + generateRandom(6)
-                            : null;
-                    return true;
-                }
-                return null;
-            })();
+            }
+            // If no ID is available, or the label is not properly associated, generate a random ID.
+            if (Utils.isEmpty(ele.id) || !isValidLabel) {
+                randomID = 'check-' + Utils.generateRandom(6);
+            }
+            // Clone the label element if it's valid.
+            isValidLabel = !Utils.isEmpty(labelSibling.htmlFor) || isValidLabel;
         }
-        return [title, ramainLabel, randomID, isValidLabel];
+
+        return {title, remainLabel, randomID, isValidLabel};
     }
 
     static insertCheckbox(
         id: string,
         ele: HTMLInputElement,
         randomID: string | null,
-        ramainLabel: boolean
-    ): [HTMLInputElement, HTMLElement, HTMLLabelElement] {
+        remainLabel: boolean
+    ): CheckboxTemplate {
         let template = Utils.getTemplate(id);
-        let templateNode = createElem('div') as HTMLElement;
+        let templateNode = createElem('div') as HTMLDivElement;
         templateNode.innerHTML = template.trim();
         let checkmarkNode = getElem('.checkmark', templateNode) as HTMLElement;
         let labelNode = getElem('label', templateNode) as HTMLLabelElement;
@@ -90,16 +85,18 @@ class Utils {
         if (randomID) {
             cloneEle.id = randomID;
         }
-        if (ramainLabel === true) {
+        if (remainLabel === true) {
             labelNode.htmlFor = cloneEle.id;
         }
         checkmarkNode.addEventListener('click', (e: Event) => {
             e.preventDefault();
             cloneEle.click();
         });
-        checkmarkNode.parentNode!.insertBefore(cloneEle, checkmarkNode);
+        if (checkmarkNode.parentNode) {
+            checkmarkNode.parentNode.insertBefore(cloneEle, checkmarkNode);
+        }
 
-        return [cloneEle, templateNode, labelNode];
+        return {cloneEle, templateNode, labelNode};
     }
 
     static insertCheckboxTitle(
@@ -146,15 +143,20 @@ class Utils {
         }
     }
 
-    static restoreElement(element: any): void {
-        element.removeEventListener('change', element.checkBoxChange);
-        element.checkBoxChange = null;
+    static restoreElement(element: EnhancedElement): void {
+        if (typeof element.checkBoxChange === 'function') {
+            element.removeEventListener('change', element.checkBoxChange);
+        }
+        element.checkBoxChange = undefined;
         element.removeAttribute('data-checkbox');
-        let parentElement = element.parentNode;
-        parentElement.replaceWith(element);
+        if (element.parentNode && element instanceof ChildNode) {
+            let parentElement = element.parentNode;
+            parentElement.replaceChild(element, element);
+        }
+        
         let labelNode = element.isValidLabel;
         if (labelNode && labelNode.nodeType === Node.ELEMENT_NODE) {
-            element.parentNode.insertBefore(labelNode, element.nextSibling);
+            element.parentNode?.insertBefore(labelNode, element.nextSibling);
         }
     }
 }
