@@ -42,7 +42,7 @@ class Utils {
         ele: HTMLElement, 
         labelSibling: HTMLElement | null
     ): CheckboxTitleDetails {
-        let title: string | null = ele.getAttribute('title') || ele.getAttribute('data-checkbox-title');
+        let title: string | null = ele.title || ele.dataset.checkboxTitle || null;
         let remainLabel: boolean = false;
         let randomID: string | null = null;
         let isValidLabel: boolean = false;
