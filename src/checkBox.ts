@@ -1,24 +1,30 @@
 import Utils from './module/utils-ext';
 import reportInfo from './module/report';
-import './checkBox.css';
+import { OnChangeCallback, OnCheckAllCallback, CheckBoxOption } from './interface/interfaces';
+import './style/checkBox.css';
 
 class CheckBox {
-    constructor(elements, option = {}) {
+    private static instances: CheckBox[] = [];
+    private static version: string = '__version__';
+    private element: string | Element | null = null;
+    private options!: CheckBoxOption;
+    private static firstLoad?: boolean;
+
+    // Methods for external use
+    private _onChange: OnChangeCallback | null = null;
+    private _onCheckAll: OnCheckAllCallback | null = null;
+
+    constructor(element: string | Element, option: CheckBoxOption = {}) {
         if (typeof CheckBox.firstLoad === 'undefined') CheckBox.firstLoad = true;
-        this.init(elements, option, CheckBox.instance.length);
-        CheckBox.instance.push(this);
+        this.init(element, option, CheckBox.instances.length);
+        CheckBox.instances.push(this);
 
-        if (CheckBox.instance.length === 1 && CheckBox.firstLoad === true) reportInfo('CheckBox is loaded, version:' + CheckBox.version);
+        if (CheckBox.instances.length === 1 && CheckBox.firstLoad === true) {
+            reportInfo(`CheckBox is loaded, version: ${CheckBox.version}`);
+        }
     }
 
-    static destroyAll() {
-        CheckBox.instance.forEach((instance) => {
-            instance.destroy();
-        });
-        CheckBox.instance = [];
-    }
-
-    init(elements, option, id) {
+    private init(elements: string | Element, option: CheckBoxOption, id: number) {
         let elem = Utils.getElem(elements, 'all');
         if (!elem || elem.length < 1) Utils.throwError('Cannot find elements : ' + elements);
         this.id = id;
@@ -141,7 +147,7 @@ class CheckBox {
         return this;
     }
 
-    checkBoxChange(toggleCheckAll, target = null) {
+    private checkBoxChange(toggleCheckAll, target = null) {
         const total = this.total;
         total.list = [];
         total.input = [];
@@ -162,15 +168,15 @@ class CheckBox {
         Utils.dispatchEvent(customEvent);
     }
 
-    getCheckBox() {
+    static getCheckBox() {
         return this.total;
     }
 
-    refresh() {
+    static refresh(): void {
         this.init(this.element, this.option);
     }
 
-    destroy() {
+    static destroy(): CheckBox {
         CheckBox.firstLoad = false;
         // Remove event listeners from all elements
         this.allElement.forEach(element => {
@@ -190,19 +196,13 @@ class CheckBox {
 
         return this;
     }
-}
 
-CheckBox.version = '__version__';
-CheckBox.instance = [];
-CheckBox.defaultOption = {
-    checked: null, // Default checked checkbox, can be boolean, string, number or array
-    // Image url of the check mark, default is a base64 image
-    checkMark: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cG9seWxpbmUgcG9pbnRzPSIyMCA2IDkgMTcgNCAxMiI+PC9wb2x5bGluZT48L3N2Zz4=',
-    checkAll: null, // Selector of the checkbox which is used to check all checkboxes
-    onChange: null,
-    onCheckAll: null,
-    bindLabel: true,
-    styles: {}
-};
+    static destroyAll(): void {
+        CheckBox.instances.forEach((instance: CheckBox) => {
+            instance.destroy();
+        });
+        CheckBox.instances = [];
+    }
+}
 
 export default CheckBox;
