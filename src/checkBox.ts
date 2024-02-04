@@ -8,7 +8,7 @@ class CheckBox {
     private static instances: CheckBox[] = [];
     private static version: string = '__version__';
     private static firstLoad: boolean = true;
-    private element: string | Element | null = null;
+    private element: string | HTMLInputElement | null = null;
     private options!: CheckBoxOption;
     private id: number = 0;
     private allElement: EnhancedElement[] = []; // Store all elements here which will be used in destroy method
@@ -19,7 +19,7 @@ class CheckBox {
     private onChangeCallback?: OnChangeCallback;
     private onCheckAllCallback?: OnCheckAllCallback;
 
-    constructor(element: string | Element, option: CheckBoxOption = {}) {
+    constructor(element: string | HTMLInputElement, option: CheckBoxOption = {}) {
         this.init(element, option, CheckBox.instances.length);
         CheckBox.instances.push(this);
 
@@ -28,8 +28,8 @@ class CheckBox {
         }
     }
 
-    private init(elements: string | Element, option: CheckBoxOption, id: number) {
-        let elem = Utils.getElem(elements, 'all') as NodeListOf<HTMLInputElement>;
+    private init(elements: string | HTMLInputElement, option: CheckBoxOption, id: number) {
+        let elem = Utils.getElem<HTMLInputElement>(elements, 'all');
         if (!elem || elem.length < 1) Utils.throwError('Cannot find elements : ' + elements);
         this.id = id;
         this.element = elements;
@@ -138,7 +138,7 @@ class CheckBox {
     private setupCheckAll(): void {
         // Retrieve the check all element
         if (this.options.checkAll === undefined) return;
-        const checkAll = Utils.getElem(this.options.checkAll) as HTMLInputElement;
+        const checkAll = Utils.getElem<HTMLInputElement>(this.options.checkAll);
         if (!checkAll || checkAll.type !== 'checkbox') return;
         if (checkAll.hasAttribute('data-checkbox')) return;
         checkAll.setAttribute('data-checkbox', 'true');

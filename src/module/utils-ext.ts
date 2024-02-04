@@ -77,8 +77,8 @@ class Utils {
         let template = Utils.getTemplate(id);
         let templateNode = createElem('div') as HTMLDivElement;
         templateNode.innerHTML = template.trim();
-        let checkmarkNode = getElem('.checkmark', templateNode) as HTMLElement;
-        let labelNode = getElem('label', templateNode) as HTMLLabelElement;
+        let checkmarkNode = getElem<HTMLElement>('.checkmark', templateNode)!;
+        let labelNode = getElem<HTMLLabelElement>('label', templateNode)!;
         let cloneEle = ele.cloneNode(true) as EnhancedElement;
         cloneEle.withID = true;
         if (randomID) {

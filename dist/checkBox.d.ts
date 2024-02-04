@@ -31,7 +31,7 @@ declare class CheckBox {
     private checkAllElement?;
     private onChangeCallback?;
     private onCheckAllCallback?;
-    constructor(element: string | Element, option?: CheckBoxOption);
+    constructor(element: string | HTMLInputElement, option?: CheckBoxOption);
     private init;
     private injectStyles;
     private setupCallbacks;

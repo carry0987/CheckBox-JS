@@ -12,6 +12,7 @@ var errorUtils = /*#__PURE__*/Object.freeze({
 });
 
 function getElem(ele, mode, parent) {
+    // Return generic Element type or NodeList
     if (typeof ele !== 'string')
         return ele;
     let searchContext = document;
@@ -25,6 +26,7 @@ function getElem(ele, mode, parent) {
         searchContext = parent;
     }
     // If mode is 'all', search for all elements that match, otherwise, search for the first match
+    // Casting the result as E or NodeList
     return mode === 'all' ? searchContext.querySelectorAll(ele) : searchContext.querySelector(ele);
 }
 function createElem(tagName, attrs = {}, text = '') {
@@ -114,9 +116,9 @@ function compatInsertRule(stylesheet, selector, cssText, id = null) {
     stylesheet.insertRule(modifiedSelector + '{' + cssText + '}', 0);
 }
 function removeStylesheet(id = null) {
-    id = isEmpty(id) ? '' : id;
-    let styleElement = getElem('#' + stylesheetId + id);
-    if (styleElement) {
+    const styleId = isEmpty(id) ? '' : id;
+    let styleElement = getElem('#' + stylesheetId + styleId);
+    if (styleElement && styleElement.parentNode) {
         styleElement.parentNode.removeChild(styleElement);
     }
 }
@@ -350,7 +352,7 @@ styleInject(css_248z);
 
 class CheckBox {
     static instances = [];
-    static version = '2.0.0';
+    static version = '2.0.1';
     static firstLoad = true;
     element = null;
     options;
