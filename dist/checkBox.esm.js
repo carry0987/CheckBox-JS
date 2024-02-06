@@ -352,7 +352,7 @@ styleInject(css_248z);
 
 class CheckBox {
     static instances = [];
-    static version = '2.0.1';
+    static version = '2.0.2';
     static firstLoad = true;
     element = null;
     options;
@@ -369,6 +369,8 @@ class CheckBox {
         if (CheckBox.instances.length === 1 && CheckBox.firstLoad === true) {
             reportInfo(`CheckBox is loaded, version: ${CheckBox.version}`);
         }
+        // Set firstLoad flag to false
+        CheckBox.firstLoad = false;
     }
     init(elements, option, id) {
         let elem = Utils.getElem(elements, 'all');

@@ -26,6 +26,9 @@ class CheckBox {
         if (CheckBox.instances.length === 1 && CheckBox.firstLoad === true) {
             reportInfo(`CheckBox is loaded, version: ${CheckBox.version}`);
         }
+
+        // Set firstLoad flag to false
+        CheckBox.firstLoad = false;
     }
 
     private init(elements: string | HTMLInputElement, option: CheckBoxOption, id: number) {
