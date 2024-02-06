@@ -185,9 +185,9 @@ class Utils {
     static getTemplate(id) {
         id = id.toString();
         let template = `
-        <div class='checkbox check-box-${id}'>
-            <span class='checkmark'></span>
-            <label class='checkbox-label'></label>
+        <div class="checkbox check-box-${id}">
+            <span class="checkmark"></span>
+            <label class="checkbox-label"></label>
         </div>
         `;
         return template;
@@ -352,7 +352,7 @@ styleInject(css_248z);
 
 class CheckBox {
     static instances = [];
-    static version = '2.0.2';
+    static version = '2.0.3';
     static firstLoad = true;
     element = null;
     options;

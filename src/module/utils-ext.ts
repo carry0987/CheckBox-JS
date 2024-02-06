@@ -29,9 +29,9 @@ class Utils {
     static getTemplate(id: string | number): string {
         id = id.toString();
         let template = `
-        <div class='checkbox check-box-${id}'>
-            <span class='checkmark'></span>
-            <label class='checkbox-label'></label>
+        <div class="checkbox check-box-${id}">
+            <span class="checkmark"></span>
+            <label class="checkbox-label"></label>
         </div>
         `;
 
