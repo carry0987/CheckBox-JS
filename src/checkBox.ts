@@ -275,6 +275,14 @@ class CheckBox {
         this.onCheckAllCallback = callback;
     }
 
+    /**
+     * Get all checkbox elements
+     * @return {EnhancedElement[]} All checkbox elements
+     */
+    public get elements(): EnhancedElement[] {
+        return this.allElement;
+    }
+
     public getCheckBox(): TotalCheckbox {
         return this.total;
     }
