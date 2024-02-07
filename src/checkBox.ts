@@ -89,11 +89,6 @@ class CheckBox {
         let { title, remainLabel, randomID, labelToRestore } = Utils.handleCheckboxTitle(ele, labelSibling);
         bindLabel = remainLabel ? true : bindLabel;
 
-        if (title && labelSibling && labelSibling.tagName === 'LABEL') {
-            title = labelSibling.textContent || title;
-            labelSibling.parentNode?.removeChild(labelSibling);
-        }
-
         // Handle checkbox checked status
         if (ele.checked) {
             Utils.toggleCheckStatus(ele, true);
@@ -105,8 +100,7 @@ class CheckBox {
         }
 
         // Insert checkbox
-        let { cloneEle, templateNode, labelNode } = Utils.insertCheckbox(this.id.toString(), ele, randomID, remainLabel);
-        ele.parentNode?.replaceChild(templateNode.firstElementChild || templateNode, ele);
+        let { cloneEle, labelNode } = Utils.insertCheckbox(this.id.toString(), ele, randomID, remainLabel);
 
         // Insert checkbox title
         Utils.insertCheckboxTitle(title, bindLabel, labelNode, cloneEle);

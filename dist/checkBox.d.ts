@@ -18,6 +18,12 @@ interface TotalCheckbox {
     checked: HTMLInputElement[];
     list: string[];
 }
+interface EnhancedElement extends HTMLInputElement {
+    withID: boolean;
+    checkAllChange?: EventListener;
+    checkBoxChange?: EventListener;
+    labelToRestore?: HTMLLabelElement;
+}
 
 declare class CheckBox {
     private static instances;
@@ -45,6 +51,11 @@ declare class CheckBox {
     private destroy;
     set onChange(callback: OnChangeCallback);
     set onCheckAll(callback: OnCheckAllCallback);
+    /**
+     * Get all checkbox elements
+     * @return {EnhancedElement[]} All checkbox elements
+     */
+    get elements(): EnhancedElement[];
     getCheckBox(): TotalCheckbox;
     refresh(): void;
     static destroyAll(): void;

@@ -62,6 +62,8 @@ class Utils {
                 labelToRestore = labelSibling.cloneNode(true) as HTMLLabelElement;
                 // Prefer the explicitly set title, fall back to text from the label.
                 title = title || labelSibling.textContent;
+                // Remove the original label
+                labelSibling.parentNode!.removeChild(labelSibling);
             }
         }
 
@@ -95,6 +97,8 @@ class Utils {
         if (checkmarkNode.parentNode) {
             checkmarkNode.parentNode.insertBefore(cloneEle, checkmarkNode);
         }
+        // Replace the original element with the new one
+        ele.parentNode!.replaceChild(templateNode.firstElementChild || templateNode, ele);
 
         return {cloneEle, templateNode, labelNode};
     }
