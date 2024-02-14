@@ -5,13 +5,13 @@ interface OnCheckAllCallback {
     (checkedAll: boolean): void;
 }
 interface CheckBoxOption {
-    checked?: boolean | string | number | Array<string | number>;
-    checkMark?: string;
-    checkAll?: string;
-    onChange?: OnChangeCallback;
-    onCheckAll?: OnCheckAllCallback;
-    bindLabel?: boolean;
-    styles?: object;
+    checked: boolean | string | number | Array<string | number> | null;
+    checkMark: string;
+    checkAll: string | null;
+    bindLabel: boolean;
+    styles: object;
+    onChange: OnChangeCallback;
+    onCheckAll: OnCheckAllCallback;
 }
 interface TotalCheckbox {
     input: HTMLInputElement[];
@@ -37,7 +37,7 @@ declare class CheckBox {
     private checkAllElement?;
     private onChangeCallback?;
     private onCheckAllCallback?;
-    constructor(element: string | HTMLInputElement, option?: CheckBoxOption);
+    constructor(element: string | HTMLInputElement, option: Partial<CheckBoxOption>);
     private init;
     private injectStyles;
     private setupCallbacks;

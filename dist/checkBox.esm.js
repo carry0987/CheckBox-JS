@@ -313,13 +313,13 @@ const reportInfo = (vars, showType = false) => {
 };
 
 const defaults = {
-    checked: undefined,
+    checked: null,
     checkMark: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cG9seWxpbmUgcG9pbnRzPSIyMCA2IDkgMTcgNCAxMiI+PC9wb2x5bGluZT48L3N2Zz4=',
-    checkAll: undefined,
+    checkAll: null,
     bindLabel: true,
-    onChange: undefined,
-    onCheckAll: undefined,
-    styles: {}
+    styles: {},
+    onChange: () => { },
+    onCheckAll: () => { },
 };
 
 function styleInject(css, ref) {
@@ -354,10 +354,10 @@ styleInject(css_248z);
 
 class CheckBox {
     static instances = [];
-    static version = '2.0.5';
+    static version = '2.0.6';
     static firstLoad = true;
     element = null;
-    options;
+    options = defaults;
     id = 0;
     allElement = []; // Store all elements here which will be used in destroy method
     total = { input: [], checked: [], list: [] };
@@ -365,7 +365,7 @@ class CheckBox {
     // Methods for external use
     onChangeCallback;
     onCheckAllCallback;
-    constructor(element, option = {}) {
+    constructor(element, option) {
         this.init(element, option, CheckBox.instances.length);
         CheckBox.instances.push(this);
         if (CheckBox.instances.length === 1 && CheckBox.firstLoad === true) {
@@ -380,7 +380,7 @@ class CheckBox {
             Utils.throwError('Cannot find elements : ' + elements);
         this.id = id;
         this.element = elements;
-        this.options = Utils.deepMerge({}, defaults, option);
+        this.options = Utils.deepMerge({}, this.options, option);
         // Inject stylesheet
         this.injectStyles();
         // Handle callback events
@@ -469,7 +469,7 @@ class CheckBox {
     }
     setupCheckAll() {
         // Retrieve the check all element
-        if (this.options.checkAll === undefined)
+        if (this.options.checkAll === null)
             return;
         const checkAll = Utils.getElem(this.options.checkAll);
         if (!checkAll || checkAll.type !== 'checkbox')
@@ -566,7 +566,7 @@ class CheckBox {
         }
         // Reset instance variables
         this.element = null;
-        this.options = {};
+        this.options = defaults;
         this.allElement = [];
         this.total = { input: [], checked: [], list: [] };
         this.checkAllElement = undefined;

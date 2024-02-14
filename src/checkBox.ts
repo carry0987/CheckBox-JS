@@ -9,7 +9,7 @@ class CheckBox {
     private static version: string = '__version__';
     private static firstLoad: boolean = true;
     private element: string | HTMLInputElement | null = null;
-    private options!: CheckBoxOption;
+    private options: CheckBoxOption = defaults;
     private id: number = 0;
     private allElement: EnhancedElement[] = []; // Store all elements here which will be used in destroy method
     private total: TotalCheckbox = {input: [], checked: [], list: []};
@@ -19,7 +19,7 @@ class CheckBox {
     private onChangeCallback?: OnChangeCallback;
     private onCheckAllCallback?: OnCheckAllCallback;
 
-    constructor(element: string | HTMLInputElement, option: CheckBoxOption = {}) {
+    constructor(element: string | HTMLInputElement, option: Partial<CheckBoxOption>) {
         this.init(element, option, CheckBox.instances.length);
         CheckBox.instances.push(this);
 
@@ -31,12 +31,12 @@ class CheckBox {
         CheckBox.firstLoad = false;
     }
 
-    private init(elements: string | HTMLInputElement, option: CheckBoxOption, id: number) {
+    private init(elements: string | HTMLInputElement, option: Partial<CheckBoxOption>, id: number) {
         let elem = Utils.getElem<HTMLInputElement>(elements, 'all');
         if (!elem || elem.length < 1) Utils.throwError('Cannot find elements : ' + elements);
         this.id = id;
         this.element = elements;
-        this.options = Utils.deepMerge({}, defaults, option);
+        this.options = Utils.deepMerge({} as CheckBoxOption, this.options, option);
 
         // Inject stylesheet
         this.injectStyles();
@@ -134,7 +134,7 @@ class CheckBox {
 
     private setupCheckAll(): void {
         // Retrieve the check all element
-        if (this.options.checkAll === undefined) return;
+        if (this.options.checkAll === null) return;
         const checkAll = Utils.getElem<HTMLInputElement>(this.options.checkAll);
         if (!checkAll || checkAll.type !== 'checkbox') return;
         if (checkAll.hasAttribute('data-checkbox')) return;
@@ -245,7 +245,7 @@ class CheckBox {
 
         // Reset instance variables
         this.element = null;
-        this.options = {};
+        this.options = defaults;
         this.allElement = [];
         this.total = { input: [], checked: [], list: [] };
         this.checkAllElement = undefined;

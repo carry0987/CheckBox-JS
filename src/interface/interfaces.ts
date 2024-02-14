@@ -7,13 +7,13 @@ export interface OnCheckAllCallback {
 }
 
 export interface CheckBoxOption {
-    checked?: boolean | string | number | Array<string | number>;
-    checkMark?: string;
-    checkAll?: string;
-    onChange?: OnChangeCallback;
-    onCheckAll?: OnCheckAllCallback;
-    bindLabel?: boolean;
-    styles?: object;
+    checked: boolean | string | number | Array<string | number> | null;
+    checkMark: string;
+    checkAll: string | null;
+    bindLabel: boolean;
+    styles: object;
+    onChange: OnChangeCallback;
+    onCheckAll: OnCheckAllCallback;
 }
 
 export interface TotalCheckbox {
