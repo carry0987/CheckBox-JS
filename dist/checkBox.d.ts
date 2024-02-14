@@ -1,5 +1,5 @@
 interface OnChangeCallback {
-    (total: TotalCheckbox, target: HTMLInputElement | null): void;
+    (total: TotalCheckbox, target?: HTMLInputElement): void;
 }
 interface OnCheckAllCallback {
     (checkedAll: boolean): void;

@@ -188,7 +188,7 @@ class CheckBox {
         }
     }
 
-    private checkBoxChange(toggleCheckAll: boolean, target: HTMLInputElement | null = null): void {
+    private checkBoxChange(toggleCheckAll: boolean, target?: HTMLInputElement): void {
         this.updateTotal();
         if (toggleCheckAll) {
             this.updateCheckAllStatus();
@@ -197,7 +197,7 @@ class CheckBox {
         if (target) {
             Utils.toggleCheckStatus(target, target.checked);
         }
-        
+
         this.dispatchCheckboxChangeEvent();
     }
 

@@ -132,12 +132,10 @@ function generateRandom(length = 8) {
     return Math.random().toString(36).substring(2, 2 + length);
 }
 
-function addEventListener(...params) {
-    const [element, eventName, handler, options] = params;
+function addEventListener(element, eventName, handler, options) {
     element.addEventListener(eventName, handler, options);
 }
-function removeEventListener(...params) {
-    const [element, eventName, handler, options] = params;
+function removeEventListener(element, eventName, handler, options) {
     element.removeEventListener(eventName, handler, options);
 }
 function createEvent(eventName, detail, options) {
@@ -356,7 +354,7 @@ styleInject(css_248z);
 
 class CheckBox {
     static instances = [];
-    static version = '2.0.4';
+    static version = '2.0.5';
     static firstLoad = true;
     element = null;
     options;
@@ -518,7 +516,7 @@ class CheckBox {
             cloneEle.dispatchEvent(new Event('change'));
         }
     }
-    checkBoxChange(toggleCheckAll, target = null) {
+    checkBoxChange(toggleCheckAll, target) {
         this.updateTotal();
         if (toggleCheckAll) {
             this.updateCheckAllStatus();

@@ -30,12 +30,11 @@
         bindLabel: true,
         checkAll: '#check-all',
         onChange: (total, target) => {
-            console.log(total);
+            console.log(target);
             if (target) console.log(target);
         },
-        onCheckAll: (total, target) => {
+        onCheckAll: (total) => {
             console.log(total);
-            if (target) console.log(target);
         },
         styles: {
             '#check-all ~ label': {
