@@ -96,7 +96,7 @@ class CheckBox {
         } else {
             if (this.options.checked) {
                 // Initialize checkbox checked status based on options
-                this.updateCheckboxCheckedStatus(ele, index);
+                this.updateCheckboxStatus(ele, index);
             }
         }
 
@@ -118,7 +118,7 @@ class CheckBox {
         cloneEle.labelToRestore = labelToRestore;
     }
 
-    private updateCheckboxCheckedStatus(ele: HTMLInputElement, index: number): void {
+    private updateCheckboxStatus(ele: HTMLInputElement, index: number): void {
         // Logic to determine if a checkbox should be checked based on the provided options
         const checkedOption = this.options.checked;
         // Handle different types of 'checked' option
