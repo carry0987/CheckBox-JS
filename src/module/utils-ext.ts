@@ -90,9 +90,14 @@ class Utils {
         if (remainLabel === true) {
             labelNode.htmlFor = cloneEle.id;
         }
-        checkmarkNode.addEventListener('click', (e: Event) => {
+        checkmarkNode.addEventListener('click', (e: MouseEvent) => {
             e.preventDefault();
             cloneEle.click();
+            // Dispatch a custom event when the shift key is pressed
+            if (e.shiftKey) {
+                let event = Utils.createEvent('shift-click', { detail: {checkedElement: cloneEle} });
+                Utils.dispatchEvent(event, cloneEle);
+            }
         });
         if (checkmarkNode.parentNode) {
             checkmarkNode.parentNode.insertBefore(cloneEle, checkmarkNode);
@@ -115,9 +120,14 @@ class Utils {
             labelNode.textContent = title;
             if (bindLabel === true) {
                 labelNode.classList.add('checkbox-labeled');
-                labelNode.addEventListener('click', (e) => {
+                labelNode.addEventListener('click', (e: MouseEvent) => {
                     e.preventDefault();
                     cloneEle.click();
+                    // Dispatch a custom event when the shift key is pressed
+                    if (e.shiftKey) {
+                        let event = Utils.createEvent('shift-click', { detail: {checkedElement: cloneEle} });
+                        Utils.dispatchEvent(event, cloneEle);
+                    }
                 });
             }
         }

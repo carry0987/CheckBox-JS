@@ -14,6 +14,7 @@ class CheckBox {
     private allElement: EnhancedElement[] = []; // Store all elements here which will be used in destroy method
     private total: TotalCheckbox = {input: [], checked: [], list: []};
     private checkAllElement?: EnhancedElement;
+    private lastChecked: EnhancedElement | null = null;
 
     // Methods for external use
     private onChangeCallback?: OnChangeCallback;
@@ -109,6 +110,8 @@ class CheckBox {
         let checkBoxChange = this.checkBoxChange.bind(this, true, cloneEle);
         cloneEle.addEventListener('change', checkBoxChange);
         cloneEle.checkBoxChange = checkBoxChange;
+        // Add event listener for shift-click
+        cloneEle.addEventListener('shift-click', (e: Event) => this.handleShiftClick(cloneEle));
         this.allElement.push(cloneEle);
 
         // Store label
@@ -188,7 +191,7 @@ class CheckBox {
         }
     }
 
-    private checkBoxChange(toggleCheckAll: boolean, target?: HTMLInputElement): void {
+    private checkBoxChange(toggleCheckAll: boolean, target?: EnhancedElement): void {
         this.updateTotal();
         if (toggleCheckAll) {
             this.updateCheckAllStatus();
@@ -227,6 +230,27 @@ class CheckBox {
     private dispatchCheckboxChangeEvent(): void {
         const customEvent = Utils.createEvent('checkbox-change', { detail: this.total });
         Utils.dispatchEvent(customEvent);
+    }
+
+    private handleShiftClick(target: EnhancedElement): void {
+        if (!this.lastChecked) {
+            this.lastChecked = target;
+            Utils.toggleCheckStatus(target, target.checked);
+            return;
+        }
+
+        let start = this.allElement.indexOf(this.lastChecked);
+        let end = this.allElement.indexOf(target);
+        let from = Math.min(start, end);
+        let to = Math.max(start, end);
+
+        // Only toggle checkboxes between the 'lastChecked' and the current target
+        for (let i = from; i <= to; i++) {
+            reportInfo('i: ' + i);
+            Utils.toggleCheckStatus(this.allElement[i], target.checked);
+        }
+
+        this.lastChecked = target; // Update the last checked item to current target
     }
 
     private destroy(): void {
