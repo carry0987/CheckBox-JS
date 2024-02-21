@@ -50,7 +50,7 @@ class CheckBox {
 
         // Set up the check all checkbox, if specified in options
         if (this.options.checkAll) {
-            this.setupCheckAll();
+            this.processCheckAll();
         }
 
         return this;
@@ -112,6 +112,11 @@ class CheckBox {
         cloneEle.checkBoxChange = checkBoxChange;
         // Add event listener for shift-click
         cloneEle.addEventListener('shift-click', (e: Event) => this.handleShiftClick(cloneEle));
+        if (!this.lastChecked) {
+            this.lastChecked = cloneEle;
+        }
+
+        // Store the cloned checkbox
         this.allElement.push(cloneEle);
 
         // Store label
@@ -135,7 +140,7 @@ class CheckBox {
         }
     }
 
-    private setupCheckAll(): void {
+    private processCheckAll(): void {
         // Retrieve the check all element
         if (this.options.checkAll === null) return;
         const checkAll = Utils.getElem<HTMLInputElement>(this.options.checkAll);
@@ -246,7 +251,6 @@ class CheckBox {
 
         // Only toggle checkboxes between the 'lastChecked' and the current target
         for (let i = from; i <= to; i++) {
-            reportInfo('i: ' + i);
             Utils.toggleCheckStatus(this.allElement[i], target.checked);
         }
 
