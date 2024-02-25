@@ -15,6 +15,7 @@
 <body>
     <div id="app">
         <h1>Normal CheckBox</h1>
+        <h2>Version:&nbsp;<span id="version"></span></h2>
         <input type="checkbox" id="check-all" title="Check All">
         <div class="check-box-list">
             <input type="checkbox" name="check-no-title" checked>
@@ -49,6 +50,7 @@
         console.log('Total: ', total);
         if (target) console.log(target);
     };
+    document.getElementById('version').innerText = CheckBox.version;
     // CheckBox.destroyAll();
     // checkBox = new CheckBox('#app .check-box-list input', {
     //     bindLabel: true,
