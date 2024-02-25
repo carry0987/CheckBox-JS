@@ -190,6 +190,28 @@ class Utils {
         `;
         return template;
     }
+    static getCheckAllElements(ele) {
+        if (!ele)
+            return [];
+        let checkAllElements = [];
+        if (Array.isArray(ele)) {
+            ele.forEach(elem => {
+                if (typeof elem === 'string') {
+                    checkAllElements.push(...Utils.getElem(elem, 'all'));
+                }
+                else if (elem instanceof HTMLInputElement) {
+                    checkAllElements.push(elem);
+                }
+            });
+        }
+        else if (typeof ele === 'string') {
+            checkAllElements.push(...Utils.getElem(ele, 'all'));
+        }
+        else if (ele instanceof HTMLInputElement) {
+            checkAllElements.push(ele);
+        }
+        return checkAllElements.filter(elem => elem !== null);
+    }
     static handleCheckboxTitle(ele, labelSibling) {
         let title = ele.title || ele.dataset.checkboxTitle || null;
         let remainLabel = false;
@@ -234,6 +256,11 @@ class Utils {
         checkmarkNode.addEventListener('click', (e) => {
             e.preventDefault();
             cloneEle.click();
+            // Dispatch a custom event when the shift key is pressed
+            if (e.shiftKey) {
+                let event = Utils.createEvent('shift-click', { detail: { checkedElement: cloneEle } });
+                Utils.dispatchEvent(event, cloneEle);
+            }
         });
         if (checkmarkNode.parentNode) {
             checkmarkNode.parentNode.insertBefore(cloneEle, checkmarkNode);
@@ -253,6 +280,11 @@ class Utils {
                 labelNode.addEventListener('click', (e) => {
                     e.preventDefault();
                     cloneEle.click();
+                    // Dispatch a custom event when the shift key is pressed
+                    if (e.shiftKey) {
+                        let event = Utils.createEvent('shift-click', { detail: { checkedElement: cloneEle } });
+                        Utils.dispatchEvent(event, cloneEle);
+                    }
                 });
             }
         }
@@ -267,20 +299,24 @@ class Utils {
             ele.removeAttribute('checked');
         }
     }
-    static toggleCheckAll(ele, total) {
-        let checkAll = getElem(ele);
-        if (!checkAll)
+    static toggleCheckAll(eles, total) {
+        if (eles.length === 0)
             return;
-        if (total && total.checked && total.input) {
-            Utils.toggleCheckStatus(checkAll, (total.checked.length !== total.input.length || total.checked.length === 0) === false);
-        }
-        else {
-            Utils.toggleCheckStatus(checkAll, false);
-        }
+        eles.forEach(ele => {
+            if (!total || !total.checked || !total.input) {
+                Utils.toggleCheckStatus(ele, false);
+                return;
+            }
+            const allChecked = total.checked.length === total.input.length && total.checked.length !== 0;
+            Utils.toggleCheckStatus(ele, allChecked);
+        });
     }
     static restoreElement(element) {
         if (typeof element.checkBoxChange === 'function') {
             element.removeEventListener('change', element.checkBoxChange);
+        }
+        if (typeof element.checkAllChange === 'function') {
+            element.removeEventListener('change', element.checkAllChange);
         }
         if (element.withID === false) {
             element.removeAttribute('id');
@@ -354,14 +390,15 @@ styleInject(css_248z);
 
 class CheckBox {
     static instances = [];
-    static version = '2.0.6';
+    static version = '2.0.7';
     static firstLoad = true;
     element = null;
     options = defaults;
     id = 0;
     allElement = []; // Store all elements here which will be used in destroy method
     total = { input: [], checked: [], list: [] };
-    checkAllElement;
+    checkAllElement = [];
+    lastChecked = null;
     // Methods for external use
     onChangeCallback;
     onCheckAllCallback;
@@ -389,7 +426,7 @@ class CheckBox {
         elem.forEach((ele, index) => this.processCheckbox(ele, index));
         // Set up the check all checkbox, if specified in options
         if (this.options.checkAll) {
-            this.setupCheckAll();
+            this.processCheckAll();
         }
         return this;
     }
@@ -434,7 +471,7 @@ class CheckBox {
         else {
             if (this.options.checked) {
                 // Initialize checkbox checked status based on options
-                this.updateCheckboxCheckedStatus(ele, index);
+                this.updateCheckboxStatus(ele, index);
             }
         }
         // Insert checkbox
@@ -442,14 +479,20 @@ class CheckBox {
         // Insert checkbox title
         Utils.insertCheckboxTitle(title, bindLabel, labelNode, cloneEle);
         // Add event listener
-        let checkBoxChange = this.checkBoxChange.bind(this, true, cloneEle);
+        let checkBoxChange = this.checkBoxChange.bind(this, true, cloneEle, undefined);
         cloneEle.addEventListener('change', checkBoxChange);
         cloneEle.checkBoxChange = checkBoxChange;
+        // Add event listener for shift-click
+        // cloneEle.addEventListener('shift-click', (e: Event) => this.handleShiftClick(cloneEle));
+        // if (!this.lastChecked) {
+        //     this.lastChecked = cloneEle.checked ? cloneEle : null;
+        // }
+        // Store the cloned checkbox
         this.allElement.push(cloneEle);
         // Store label
         cloneEle.labelToRestore = labelToRestore;
     }
-    updateCheckboxCheckedStatus(ele, index) {
+    updateCheckboxStatus(ele, index) {
         // Logic to determine if a checkbox should be checked based on the provided options
         const checkedOption = this.options.checked;
         // Handle different types of 'checked' option
@@ -467,66 +510,71 @@ class CheckBox {
             }
         }
     }
-    setupCheckAll() {
+    processCheckAll() {
         // Retrieve the check all element
-        if (this.options.checkAll === null)
+        const checkAllElements = Utils.getCheckAllElements(this.options.checkAll);
+        if (checkAllElements.length === 0)
             return;
-        const checkAll = Utils.getElem(this.options.checkAll);
-        if (!checkAll || checkAll.type !== 'checkbox')
-            return;
-        if (checkAll.hasAttribute('data-checkbox'))
-            return;
-        checkAll.setAttribute('data-checkbox', 'true');
-        // Handle the label associated with the check all checkbox
-        const labelSibling = checkAll.nextElementSibling;
-        let { title, remainLabel, randomID, labelToRestore } = Utils.handleCheckboxTitle(checkAll, labelSibling);
-        // If a title has been found and is true, retrieve the label's content
-        if (title && labelSibling && labelSibling.tagName === 'LABEL') {
-            title = labelSibling.textContent || title;
-            labelSibling.parentNode?.removeChild(labelSibling);
-        }
-        // Insert the check all checkbox template
-        const { cloneEle, templateNode, labelNode } = Utils.insertCheckbox(this.id.toString(), checkAll, randomID, remainLabel);
-        // Replace the original checkbox with the new template
-        checkAll.parentNode?.replaceChild(templateNode.firstElementChild || templateNode, checkAll);
-        // Insert the title for the check all checkbox
-        Utils.insertCheckboxTitle(title, this.options.bindLabel ?? false, labelNode, cloneEle);
-        // Attach the change event listener to the cloned checkbox
-        const checkAllChange = (e) => {
-            if (!(e.target instanceof HTMLInputElement))
+        checkAllElements.forEach(checkAll => {
+            if (!checkAll || checkAll.type !== 'checkbox')
                 return;
-            const checkedAll = e.target.checked;
-            // Toggle the status for all checkboxes
-            this.allElement.forEach((checkbox) => {
-                Utils.toggleCheckStatus(checkbox, checkedAll);
-            });
-            // Update the check all status and invoke the callback
-            this.checkBoxChange(false);
-            if (this.onCheckAllCallback)
-                this.onCheckAllCallback(checkedAll);
-        };
-        cloneEle.addEventListener('change', checkAllChange);
-        cloneEle.checkAllChange = checkAllChange;
-        cloneEle.labelToRestore = labelToRestore;
-        // Update the stored check all element property
-        this.checkAllElement = cloneEle;
-        // Set the initial check status based on provided options
-        if (this.options.checked === true || checkAll.checked) {
-            Utils.toggleCheckStatus(cloneEle, true);
-            cloneEle.dispatchEvent(new Event('change'));
-        }
+            if (checkAll.hasAttribute('data-checkbox'))
+                return;
+            checkAll.setAttribute('data-checkbox', 'true');
+            // Handle the label associated with the check all checkbox
+            const labelSibling = checkAll.nextElementSibling;
+            let { title, remainLabel, randomID, labelToRestore } = Utils.handleCheckboxTitle(checkAll, labelSibling);
+            // If a title has been found and is true, retrieve the label's content
+            if (title && labelSibling && labelSibling.tagName === 'LABEL') {
+                title = labelSibling.textContent || title;
+                labelSibling.parentNode?.removeChild(labelSibling);
+            }
+            // Insert the check all checkbox template
+            const { cloneEle, templateNode, labelNode } = Utils.insertCheckbox(this.id.toString(), checkAll, randomID, remainLabel);
+            // Replace the original checkbox with the new template
+            checkAll.parentNode?.replaceChild(templateNode.firstElementChild || templateNode, checkAll);
+            // Insert the title for the check all checkbox
+            Utils.insertCheckboxTitle(title, this.options.bindLabel ?? false, labelNode, cloneEle);
+            cloneEle.addEventListener('change', this.checkAllChange);
+            cloneEle.checkAllChange = this.checkAllChange;
+            cloneEle.labelToRestore = labelToRestore;
+            // Store the cloned check all checkbox
+            this.checkAllElement.push(cloneEle);
+            // Set the initial check status based on provided options
+            if (this.options.checked === true || checkAll.checked) {
+                Utils.toggleCheckStatus(cloneEle, true);
+                cloneEle.dispatchEvent(new Event('change'));
+            }
+        });
     }
-    checkBoxChange(toggleCheckAll, target) {
+    checkBoxChange(toggleCheckAll, target, checkStatus) {
         this.updateTotal();
         if (toggleCheckAll) {
             this.updateCheckAllStatus();
         }
         this.onChangeCallback?.(this.total, target);
         if (target) {
-            Utils.toggleCheckStatus(target, target.checked);
+            Utils.toggleCheckStatus(target, checkStatus ?? target.checked);
+            // this.lastChecked = (target.checked) ? target : null;
         }
         this.dispatchCheckboxChangeEvent();
     }
+    checkAllChange = (e) => {
+        if (!(e.target instanceof HTMLInputElement))
+            return;
+        const checkedAll = e.target.checked;
+        // Toggle the status for all checkboxes
+        this.allElement.forEach((checkbox) => {
+            Utils.toggleCheckStatus(checkbox, checkedAll);
+        });
+        // Update the total and check all status
+        this.updateTotal();
+        this.updateCheckAllStatus();
+        // Update the check all status and invoke the callback
+        this.checkBoxChange(false);
+        if (this.onCheckAllCallback)
+            this.onCheckAllCallback(checkedAll);
+    };
     updateTotal() {
         const total = this.total;
         total.list = [];
@@ -541,16 +589,33 @@ class CheckBox {
         });
     }
     updateCheckAllStatus() {
-        if (this.checkAllElement) {
+        if (this.checkAllElement.length > 0) {
             const totalChecked = this.total.checked.length;
             const totalInputs = this.total.input.length;
             const isAllChecked = totalChecked === totalInputs;
-            Utils.toggleCheckStatus(this.checkAllElement, isAllChecked);
+            this.checkAllElement.forEach((checkAll) => {
+                Utils.toggleCheckStatus(checkAll, isAllChecked);
+            });
         }
     }
     dispatchCheckboxChangeEvent() {
         const customEvent = Utils.createEvent('checkbox-change', { detail: this.total });
         Utils.dispatchEvent(customEvent);
+    }
+    handleShiftClick(target) {
+        if (!this.lastChecked) {
+            this.checkBoxChange(false, target);
+            return;
+        }
+        let start = this.allElement.indexOf(this.lastChecked);
+        let end = this.allElement.indexOf(target);
+        let from = Math.min(start, end);
+        let to = Math.max(start, end);
+        // Use this.lastChecked.checked to determine the state to apply between the range
+        for (let i = from; i <= to; i++) {
+            this.checkBoxChange(true, this.allElement[i], this.lastChecked.checked);
+        }
+        this.lastChecked = target; // Update the last checked item to current target
     }
     destroy() {
         // Reset firstLoad flag
@@ -560,16 +625,20 @@ class CheckBox {
             Utils.restoreElement(element);
         });
         // Clear the checkAll event if it exists
-        if (this.checkAllElement && this.checkAllElement.checkAllChange) {
-            Utils.toggleCheckAll(this.checkAllElement);
-            Utils.restoreElement(this.checkAllElement);
+        if (this.checkAllElement.length > 0) {
+            this.checkAllElement.forEach((checkAll) => {
+                if (checkAll.checkAllChange) {
+                    Utils.toggleCheckAll(this.checkAllElement);
+                    Utils.restoreElement(checkAll);
+                }
+            });
         }
         // Reset instance variables
         this.element = null;
         this.options = defaults;
         this.allElement = [];
         this.total = { input: [], checked: [], list: [] };
-        this.checkAllElement = undefined;
+        this.checkAllElement = [];
         // Remove any injected stylesheets
         Utils.removeStylesheet(this.id.toString());
         // Update the static instances array, removing this instance

@@ -25,12 +25,13 @@
             <input type="checkbox" name="check-3" id="check-3" value="Test-3">
             <label for="check-3">Check-3</label>
         </div>
+        <input type="checkbox" id="check-all-2" title="Check All">
     </div>
     <script src="dist/checkBox.min.js"></script>
     <script type="text/javascript">
     let checkBox = new CheckBox('#app .check-box-list input', {
         bindLabel: true,
-        checkAll: '#check-all',
+        checkAll: ['#check-all', '#check-all-2'],
         onChange: (total, target) => {
             console.log(target);
             if (target) console.log(target);

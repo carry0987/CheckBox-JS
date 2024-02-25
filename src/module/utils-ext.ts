@@ -12,6 +12,7 @@ import {
     removeStylesheet,
 } from '@carry0987/utils';
 import { TotalCheckbox, CheckboxTitleDetails, CheckboxTemplate, EnhancedElement } from '../interface/interfaces';
+import { CheckAllButtons } from '../type/types';
 
 class Utils {
     static throwError = errorUtils.throwError;
@@ -36,6 +37,26 @@ class Utils {
         `;
 
         return template;
+    }
+
+    static getCheckAllElements(ele: CheckAllButtons): HTMLInputElement[] {
+        if (!ele) return [];
+        let checkAllElements: HTMLInputElement[] = [];
+        if (Array.isArray(ele)) {
+            ele.forEach(elem => {
+                if (typeof elem === 'string') {
+                    checkAllElements.push(...Utils.getElem<HTMLInputElement>(elem, 'all'));
+                } else if (elem instanceof HTMLInputElement) {
+                    checkAllElements.push(elem);
+                }
+            });
+        } else if (typeof ele === 'string') {
+            checkAllElements.push(...Utils.getElem<HTMLInputElement>(ele, 'all'));
+        } else if (ele instanceof HTMLInputElement) {
+            checkAllElements.push(ele);
+        }
+
+        return checkAllElements.filter(elem => elem !== null);
     }
 
     static handleCheckboxTitle(
@@ -143,22 +164,24 @@ class Utils {
         }
     }
 
-    static toggleCheckAll(ele: string | EnhancedElement, total?: TotalCheckbox): void {
-        let checkAll = getElem(ele) as HTMLInputElement;
-        if (!checkAll) return;
-        if (total && total.checked && total.input) {
-            Utils.toggleCheckStatus(
-                checkAll,
-                (total.checked.length !== total.input.length || total.checked.length === 0) === false
-            );
-        } else {
-            Utils.toggleCheckStatus(checkAll, false);
-        }
+    static toggleCheckAll(eles: EnhancedElement[], total?: TotalCheckbox): void {
+        if (eles.length === 0) return;
+        eles.forEach(ele => {
+            if (!total || !total.checked || !total.input) {
+                Utils.toggleCheckStatus(ele, false);
+                return;
+            }
+            const allChecked = total.checked.length === total.input.length && total.checked.length !== 0;
+            Utils.toggleCheckStatus(ele, allChecked);
+        });
     }
 
     static restoreElement(element: EnhancedElement): void {
         if (typeof element.checkBoxChange === 'function') {
             element.removeEventListener('change', element.checkBoxChange);
+        }
+        if (typeof element.checkAllChange === 'function') {
+            element.removeEventListener('change', element.checkAllChange);
         }
         if (element.withID === false) {
             element.removeAttribute('id');

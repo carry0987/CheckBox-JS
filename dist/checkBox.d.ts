@@ -1,3 +1,5 @@
+type CheckAllButtons = string | HTMLInputElement | Array<string | HTMLInputElement> | null;
+
 interface OnChangeCallback {
     (total: TotalCheckbox, target?: HTMLInputElement): void;
 }
@@ -7,7 +9,7 @@ interface OnCheckAllCallback {
 interface CheckBoxOption {
     checked: boolean | string | number | Array<string | number> | null;
     checkMark: string;
-    checkAll: string | null;
+    checkAll: CheckAllButtons;
     bindLabel: boolean;
     styles: object;
     onChange: OnChangeCallback;
@@ -34,7 +36,8 @@ declare class CheckBox {
     private id;
     private allElement;
     private total;
-    private checkAllElement?;
+    private checkAllElement;
+    private lastChecked;
     private onChangeCallback?;
     private onCheckAllCallback?;
     constructor(element: string | HTMLInputElement, option: Partial<CheckBoxOption>);
@@ -42,12 +45,14 @@ declare class CheckBox {
     private injectStyles;
     private setupCallbacks;
     private processCheckbox;
-    private updateCheckboxCheckedStatus;
-    private setupCheckAll;
+    private updateCheckboxStatus;
+    private processCheckAll;
     private checkBoxChange;
+    private checkAllChange;
     private updateTotal;
     private updateCheckAllStatus;
     private dispatchCheckboxChangeEvent;
+    private handleShiftClick;
     private destroy;
     set onChange(callback: OnChangeCallback);
     set onCheckAll(callback: OnCheckAllCallback);

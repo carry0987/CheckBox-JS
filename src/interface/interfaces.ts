@@ -1,3 +1,5 @@
+import { CheckAllButtons } from '../type/types';
+
 export interface OnChangeCallback {
     (total: TotalCheckbox, target?: HTMLInputElement): void;
 }
@@ -9,7 +11,7 @@ export interface OnCheckAllCallback {
 export interface CheckBoxOption {
     checked: boolean | string | number | Array<string | number> | null;
     checkMark: string;
-    checkAll: string | null;
+    checkAll: CheckAllButtons;
     bindLabel: boolean;
     styles: object;
     onChange: OnChangeCallback;

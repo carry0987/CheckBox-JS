@@ -66,7 +66,7 @@ const dtsConfig = {
     external: [/\.css$/u],
     plugins: [
         dts(),
-        del({ hook: 'buildEnd', targets: ['!dist/index.js', 'dist/*.d.ts', 'dist/interface', 'dist/module'] })
+        del({ hook: 'buildEnd', targets: ['!dist/index.js', 'dist/*.d.ts', 'dist/interface', 'dist/module', 'dist/type'] })
     ]
 };
 
