@@ -1,3 +1,4 @@
+type CheckedTargets = boolean | string | number | Array<string | number> | null;
 type CheckAllButtons = string | HTMLInputElement | Array<string | HTMLInputElement> | null;
 
 interface OnChangeCallback {
@@ -7,7 +8,7 @@ interface OnCheckAllCallback {
     (checkedAll: boolean): void;
 }
 interface CheckBoxOption {
-    checked: boolean | string | number | Array<string | number> | null;
+    checked: CheckedTargets;
     checkMark: string;
     checkAll: CheckAllButtons;
     bindLabel: boolean;
