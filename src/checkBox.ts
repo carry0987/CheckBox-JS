@@ -107,14 +107,14 @@ class CheckBox {
         Utils.insertCheckboxTitle(title, bindLabel, labelNode, cloneEle);
 
         // Add event listener
-        let checkBoxChange = this.checkBoxChange.bind(this, true, cloneEle);
+        let checkBoxChange = this.checkBoxChange.bind(this, true, cloneEle, undefined);
         cloneEle.addEventListener('change', checkBoxChange);
         cloneEle.checkBoxChange = checkBoxChange;
         // Add event listener for shift-click
-        cloneEle.addEventListener('shift-click', (e: Event) => this.handleShiftClick(cloneEle));
-        if (!this.lastChecked) {
-            this.lastChecked = cloneEle;
-        }
+        // cloneEle.addEventListener('shift-click', (e: Event) => this.handleShiftClick(cloneEle));
+        // if (!this.lastChecked) {
+        //     this.lastChecked = cloneEle.checked ? cloneEle : null;
+        // }
 
         // Store the cloned checkbox
         this.allElement.push(cloneEle);
@@ -196,14 +196,15 @@ class CheckBox {
         }
     }
 
-    private checkBoxChange(toggleCheckAll: boolean, target?: EnhancedElement): void {
+    private checkBoxChange(toggleCheckAll: boolean, target?: EnhancedElement, checkStatus?: boolean): void {
         this.updateTotal();
         if (toggleCheckAll) {
             this.updateCheckAllStatus();
         }
         this.onChangeCallback?.(this.total, target);
         if (target) {
-            Utils.toggleCheckStatus(target, target.checked);
+            Utils.toggleCheckStatus(target, checkStatus ?? target.checked);
+            // this.lastChecked = (target.checked) ? target : null;
         }
 
         this.dispatchCheckboxChangeEvent();
@@ -239,8 +240,7 @@ class CheckBox {
 
     private handleShiftClick(target: EnhancedElement): void {
         if (!this.lastChecked) {
-            this.lastChecked = target;
-            Utils.toggleCheckStatus(target, target.checked);
+            this.checkBoxChange(false, target);
             return;
         }
 
@@ -249,9 +249,9 @@ class CheckBox {
         let from = Math.min(start, end);
         let to = Math.max(start, end);
 
-        // Only toggle checkboxes between the 'lastChecked' and the current target
+        // Use this.lastChecked.checked to determine the state to apply between the range
         for (let i = from; i <= to; i++) {
-            Utils.toggleCheckStatus(this.allElement[i], target.checked);
+            this.checkBoxChange(true, this.allElement[i], this.lastChecked.checked);
         }
 
         this.lastChecked = target; // Update the last checked item to current target
