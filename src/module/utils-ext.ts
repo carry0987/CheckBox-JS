@@ -117,8 +117,7 @@ class Utils {
             cloneEle.click();
             // Dispatch a custom event when the shift key is pressed
             if (e.shiftKey) {
-                let event = Utils.createEvent('shift-click', { detail: {checkedElement: cloneEle} });
-                Utils.dispatchEvent(event, cloneEle);
+                this.triggerShiftClick(cloneEle);
             }
         });
         if (checkmarkNode.parentNode) {
@@ -134,7 +133,7 @@ class Utils {
         title: string | null,
         bindLabel: boolean,
         labelNode: HTMLLabelElement,
-        cloneEle: HTMLInputElement
+        cloneEle: EnhancedElement
     ): void {
         if (!title) {
             labelNode.parentNode!.removeChild(labelNode);
@@ -147,8 +146,7 @@ class Utils {
                     cloneEle.click();
                     // Dispatch a custom event when the shift key is pressed
                     if (e.shiftKey) {
-                        let event = Utils.createEvent('shift-click', { detail: {checkedElement: cloneEle} });
-                        Utils.dispatchEvent(event, cloneEle);
+                        this.triggerShiftClick(cloneEle);
                     }
                 });
             }
@@ -197,6 +195,11 @@ class Utils {
         if (labelNode && labelNode.nodeType === Node.ELEMENT_NODE) {
             element.parentNode?.insertBefore(labelNode, element.nextSibling);
         }
+    }
+
+    private static triggerShiftClick(cloneEle: EnhancedElement): void {
+        let event = Utils.createEvent('shift-click', {checkedElement: cloneEle});
+        Utils.dispatchEvent(event, cloneEle);
     }
 }
 
