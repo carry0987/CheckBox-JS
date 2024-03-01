@@ -25,6 +25,7 @@ class Utils {
     static setReplaceRule = setReplaceRule;
     static isEmpty = isEmpty;
     static createEvent = eventUtils.createEvent;
+    static addEventListener = eventUtils.addEventListener;
     static dispatchEvent = eventUtils.dispatchEvent;
 
     static getTemplate(id: string | number): string {

@@ -111,10 +111,10 @@ class CheckBox {
         cloneEle.addEventListener('change', checkBoxChange);
         cloneEle.checkBoxChange = checkBoxChange;
         // Add event listener for shift-click
-        // cloneEle.addEventListener('shift-click', (e: Event) => this.handleShiftClick(cloneEle));
-        // if (!this.lastChecked) {
-        //     this.lastChecked = cloneEle.checked ? cloneEle : null;
-        // }
+        Utils.addEventListener(cloneEle, 'shift-click', this.handleShiftClick);
+        if (!this.lastChecked && cloneEle.checked) {
+            this.lastChecked = cloneEle;
+        }
 
         // Store the cloned checkbox
         this.allElement.push(cloneEle);
@@ -192,7 +192,6 @@ class CheckBox {
         this.onChangeCallback?.(this.total, target);
         if (target) {
             Utils.toggleCheckStatus(target, checkStatus ?? target.checked);
-            // this.lastChecked = (target.checked) ? target : null;
         }
 
         this.dispatchCheckboxChangeEvent();
@@ -246,23 +245,9 @@ class CheckBox {
         Utils.dispatchEvent(customEvent);
     }
 
-    private handleShiftClick(target: EnhancedElement): void {
-        if (!this.lastChecked) {
-            this.checkBoxChange(false, target);
-            return;
-        }
-
-        let start = this.allElement.indexOf(this.lastChecked);
-        let end = this.allElement.indexOf(target);
-        let from = Math.min(start, end);
-        let to = Math.max(start, end);
-
-        // Use this.lastChecked.checked to determine the state to apply between the range
-        for (let i = from; i <= to; i++) {
-            this.checkBoxChange(true, this.allElement[i], this.lastChecked.checked);
-        }
-
-        this.lastChecked = target; // Update the last checked item to current target
+    private handleShiftClick = (e: CustomEvent): void => {
+        reportInfo('Shift-click event detected');
+        const target = e.detail.checkedElement as EnhancedElement;
     }
 
     private destroy(): void {
