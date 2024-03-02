@@ -1,7 +1,7 @@
 import { CheckedTargets, CheckAllButtons } from '../type/types';
 
 export interface OnChangeCallback {
-    (total: TotalCheckbox, target?: HTMLInputElement): void;
+    (total: TotalCheckbox, target?: EnhancedElement): void;
 }
 
 export interface OnCheckAllCallback {
@@ -12,6 +12,7 @@ export interface CheckBoxOption {
     checked: CheckedTargets;
     checkMark: string;
     checkAll: CheckAllButtons;
+    allowShiftKey: boolean;
     bindLabel: boolean;
     styles: object;
     onChange: OnChangeCallback;
@@ -19,8 +20,8 @@ export interface CheckBoxOption {
 }
 
 export interface TotalCheckbox {
-    input: HTMLInputElement[]; // Store all checkbox element
-    checked: HTMLInputElement[]; // Store all checked checkbox
+    input: EnhancedElement[]; // Store all checkbox element
+    checked: EnhancedElement[]; // Store all checked checkbox
     list: string[]; // Store all checked checkbox value
 }
 

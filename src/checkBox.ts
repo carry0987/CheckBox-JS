@@ -14,7 +14,6 @@ class CheckBox {
     private allElement: EnhancedElement[] = []; // Store all elements here which will be used in destroy method
     private total: TotalCheckbox = {input: [], checked: [], list: []};
     private checkAllElement: EnhancedElement[] = [];
-    private lastChecked?: EnhancedElement;
 
     // Methods for external use
     private onChangeCallback?: OnChangeCallback;
@@ -47,6 +46,9 @@ class CheckBox {
 
         // Process each checkbox element
         elem.forEach((ele, index) => this.processCheckbox(ele, index));
+
+        // Update the total and check all status
+        this.updateTotal();
 
         // Set up the check all checkbox, if specified in options
         if (this.options.checkAll) {
@@ -111,8 +113,9 @@ class CheckBox {
         cloneEle.addEventListener('change', checkBoxChange);
         cloneEle.checkBoxChange = checkBoxChange;
         // Add event listener for shift-click
-        Utils.addEventListener(cloneEle, 'shift-click', this.handleShiftClick);
-        this.updateLastChecked(cloneEle, true);
+        if (this.options.allowShiftKey) {
+            Utils.addEventListener(cloneEle, 'shift-click', this.handleShiftClick);
+        }
 
         // Store the cloned checkbox
         this.allElement.push(cloneEle);
@@ -214,17 +217,18 @@ class CheckBox {
     }
 
     private updateTotal(): void {
-        const total = this.total;
-        total.list = [];
-        total.input = [];
-        total.checked = [];
-        this.allElement.forEach((checkbox) => {
-            total.input.push(checkbox);
-            if (checkbox.checked) {
-                total.list.push(checkbox.value);
-                total.checked.push(checkbox);
-            }
-        });
+        // Update total.input to reflect the current list of checkboxes
+        this.total.input = [...this.allElement];
+        // Get the current list of checked elements
+        const currentChecked = this.allElement.filter(checkbox => checkbox.checked);
+        // Keep the order of elements in total.checked the same, add new checked elements to the end
+        // And filter out elements that are no longer checked
+        this.total.checked = this.total.checked.filter(checkbox => checkbox.checked);
+        // Find new checked elements and add them to the end
+        const newChecked = currentChecked.filter(checkbox => !this.total.checked.includes(checkbox));
+        this.total.checked.push(...newChecked);
+        // Update total.list to reflect the new order of checked items
+        this.total.list = this.total.checked.map(checkbox => checkbox.value);
     }
 
     private updateCheckAllStatus(): void {
@@ -244,52 +248,39 @@ class CheckBox {
     }
 
     private handleShiftClick = (e: CustomEvent): void => {
-        if (this.lastChecked && !this.lastChecked.checked) {
-            this.lastChecked = undefined;
-            return;
-        }
-
         const target = e.detail.checkedElement as EnhancedElement;
+        const lastChecked = this.getLastChecked(true);
+        if (!target || !lastChecked) return;
 
-        if (!this.lastChecked || this.lastChecked === target) {
-            this.lastChecked = target;
-            return;
-        }
-
-        let start = this.allElement.indexOf(this.lastChecked);
+        let start = this.allElement.indexOf(lastChecked);
         let end = this.allElement.indexOf(target);
-
-        reportInfo(this.allElement[start]);
-        reportInfo(target);
 
         // If there's a last checked element and the shift key is being held down
         // Check/uncheck all checkboxes from lastChecked to the target checkbox
-        if (this.lastChecked && start !== -1 && end !== -1) {
+        if (lastChecked && start !== -1 && end !== -1) {
             reportInfo('Shift-click event detected');
             const min = Math.min(start, end);
             const max = Math.max(start, end);
             for (let i = min; i <= max; i++) {
                 const shouldBeChecked = target.checked; // Match the target's checked state
                 const checkbox = this.allElement[i];
-                
+                // Update the checked status of the checkbox
                 Utils.toggleCheckStatus(checkbox, shouldBeChecked);
             }
             this.updateTotal();
             this.updateCheckAllStatus();
             this.dispatchCheckboxChangeEvent();
         }
-
-        this.lastChecked = target; // Update lastChecked reference for next shift-click operation
     }
 
-    private updateLastChecked(target?: EnhancedElement, preserve: boolean = false): void {
-        if (!target) return;
-        if (target.checked) {
-            this.lastChecked = target;
-            return;
-        }
-        if (preserve) return;
-        this.lastChecked = undefined;
+    private getLastChecked(excludeShift: boolean = false): EnhancedElement | null {
+        const checkedElements = this.total.checked;
+        let offset = !excludeShift ? 1 : 2;
+
+        if (checkedElements.length === 0) return null;
+        if (checkedElements.length === 1) return checkedElements[0];
+
+        return checkedElements[checkedElements.length - offset];
     }
 
     private destroy(): void {

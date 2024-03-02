@@ -179,6 +179,7 @@ class Utils {
     static setReplaceRule = setReplaceRule;
     static isEmpty = isEmpty;
     static createEvent = eventUtils.createEvent;
+    static addEventListener = eventUtils.addEventListener;
     static dispatchEvent = eventUtils.dispatchEvent;
     static getTemplate(id) {
         id = id.toString();
@@ -258,8 +259,7 @@ class Utils {
             cloneEle.click();
             // Dispatch a custom event when the shift key is pressed
             if (e.shiftKey) {
-                let event = Utils.createEvent('shift-click', { detail: { checkedElement: cloneEle } });
-                Utils.dispatchEvent(event, cloneEle);
+                this.triggerShiftClick(cloneEle);
             }
         });
         if (checkmarkNode.parentNode) {
@@ -282,8 +282,7 @@ class Utils {
                     cloneEle.click();
                     // Dispatch a custom event when the shift key is pressed
                     if (e.shiftKey) {
-                        let event = Utils.createEvent('shift-click', { detail: { checkedElement: cloneEle } });
-                        Utils.dispatchEvent(event, cloneEle);
+                        this.triggerShiftClick(cloneEle);
                     }
                 });
             }
@@ -332,6 +331,10 @@ class Utils {
             element.parentNode?.insertBefore(labelNode, element.nextSibling);
         }
     }
+    static triggerShiftClick(cloneEle) {
+        let event = Utils.createEvent('shift-click', { checkedElement: cloneEle });
+        Utils.dispatchEvent(event, cloneEle);
+    }
 }
 Utils.setStylesheetId('checkbox-style');
 Utils.setReplaceRule('.check-box', '.check-box-');
@@ -352,6 +355,7 @@ const defaults = {
     checked: null,
     checkMark: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cG9seWxpbmUgcG9pbnRzPSIyMCA2IDkgMTcgNCAxMiI+PC9wb2x5bGluZT48L3N2Zz4=',
     checkAll: null,
+    allowShiftKey: false,
     bindLabel: true,
     styles: {},
     onChange: () => { },
@@ -390,7 +394,7 @@ styleInject(css_248z);
 
 class CheckBox {
     static instances = [];
-    static version = '2.0.8';
+    static version = '2.0.9';
     static firstLoad = true;
     element = null;
     options = defaults;
@@ -398,7 +402,6 @@ class CheckBox {
     allElement = []; // Store all elements here which will be used in destroy method
     total = { input: [], checked: [], list: [] };
     checkAllElement = [];
-    lastChecked = null;
     // Methods for external use
     onChangeCallback;
     onCheckAllCallback;
@@ -424,6 +427,8 @@ class CheckBox {
         this.setupCallbacks();
         // Process each checkbox element
         elem.forEach((ele, index) => this.processCheckbox(ele, index));
+        // Update the total and check all status
+        this.updateTotal();
         // Set up the check all checkbox, if specified in options
         if (this.options.checkAll) {
             this.processCheckAll();
@@ -483,10 +488,9 @@ class CheckBox {
         cloneEle.addEventListener('change', checkBoxChange);
         cloneEle.checkBoxChange = checkBoxChange;
         // Add event listener for shift-click
-        // cloneEle.addEventListener('shift-click', (e: Event) => this.handleShiftClick(cloneEle));
-        // if (!this.lastChecked) {
-        //     this.lastChecked = cloneEle.checked ? cloneEle : null;
-        // }
+        if (this.options.allowShiftKey) {
+            Utils.addEventListener(cloneEle, 'shift-click', this.handleShiftClick);
+        }
         // Store the cloned checkbox
         this.allElement.push(cloneEle);
         // Store label
@@ -555,7 +559,6 @@ class CheckBox {
         this.onChangeCallback?.(this.total, target);
         if (target) {
             Utils.toggleCheckStatus(target, checkStatus ?? target.checked);
-            // this.lastChecked = (target.checked) ? target : null;
         }
         this.dispatchCheckboxChangeEvent();
     }
@@ -576,17 +579,18 @@ class CheckBox {
             this.onCheckAllCallback(checkedAll);
     };
     updateTotal() {
-        const total = this.total;
-        total.list = [];
-        total.input = [];
-        total.checked = [];
-        this.allElement.forEach((checkbox) => {
-            total.input.push(checkbox);
-            if (checkbox.checked) {
-                total.list.push(checkbox.value);
-                total.checked.push(checkbox);
-            }
-        });
+        // Update total.input to reflect the current list of checkboxes
+        this.total.input = [...this.allElement];
+        // Get the current list of checked elements
+        const currentChecked = this.allElement.filter(checkbox => checkbox.checked);
+        // Keep the order of elements in total.checked the same, add new checked elements to the end
+        // And filter out elements that are no longer checked
+        this.total.checked = this.total.checked.filter(checkbox => checkbox.checked);
+        // Find new checked elements and add them to the end
+        const newChecked = currentChecked.filter(checkbox => !this.total.checked.includes(checkbox));
+        this.total.checked.push(...newChecked);
+        // Update total.list to reflect the new order of checked items
+        this.total.list = this.total.checked.map(checkbox => checkbox.value);
     }
     updateCheckAllStatus() {
         if (this.checkAllElement.length > 0) {
@@ -602,20 +606,38 @@ class CheckBox {
         const customEvent = Utils.createEvent('checkbox-change', { detail: this.total });
         Utils.dispatchEvent(customEvent);
     }
-    handleShiftClick(target) {
-        if (!this.lastChecked) {
-            this.checkBoxChange(false, target);
+    handleShiftClick = (e) => {
+        const target = e.detail.checkedElement;
+        const lastChecked = this.getLastChecked(true);
+        if (!target || !lastChecked)
             return;
-        }
-        let start = this.allElement.indexOf(this.lastChecked);
+        let start = this.allElement.indexOf(lastChecked);
         let end = this.allElement.indexOf(target);
-        let from = Math.min(start, end);
-        let to = Math.max(start, end);
-        // Use this.lastChecked.checked to determine the state to apply between the range
-        for (let i = from; i <= to; i++) {
-            this.checkBoxChange(true, this.allElement[i], this.lastChecked.checked);
+        // If there's a last checked element and the shift key is being held down
+        // Check/uncheck all checkboxes from lastChecked to the target checkbox
+        if (lastChecked && start !== -1 && end !== -1) {
+            reportInfo('Shift-click event detected');
+            const min = Math.min(start, end);
+            const max = Math.max(start, end);
+            for (let i = min; i <= max; i++) {
+                const shouldBeChecked = target.checked; // Match the target's checked state
+                const checkbox = this.allElement[i];
+                // Update the checked status of the checkbox
+                Utils.toggleCheckStatus(checkbox, shouldBeChecked);
+            }
+            this.updateTotal();
+            this.updateCheckAllStatus();
+            this.dispatchCheckboxChangeEvent();
         }
-        this.lastChecked = target; // Update the last checked item to current target
+    };
+    getLastChecked(excludeShift = false) {
+        const checkedElements = this.total.checked;
+        let offset = !excludeShift ? 1 : 2;
+        if (checkedElements.length === 0)
+            return null;
+        if (checkedElements.length === 1)
+            return checkedElements[0];
+        return checkedElements[checkedElements.length - offset];
     }
     destroy() {
         // Reset firstLoad flag
