@@ -22,6 +22,17 @@ interface TotalCheckbox {
     checked: EnhancedElement[];
     list: string[];
 }
+interface CheckboxTitleDetails {
+    title: string | null;
+    remainLabel: boolean;
+    randomID: string | null;
+    labelToRestore?: HTMLLabelElement;
+}
+interface CheckboxTemplate {
+    cloneEle: EnhancedElement;
+    templateNode: HTMLDivElement;
+    labelNode: HTMLLabelElement;
+}
 interface EnhancedElement extends HTMLInputElement {
     withID: boolean;
     checkAllChange?: EventListener;
@@ -68,4 +79,4 @@ declare class CheckBox {
     static destroyAll(): void;
 }
 
-export { CheckBox as default };
+export { type CheckAllButtons, type CheckBoxOption, type CheckboxTemplate, type CheckboxTitleDetails, type CheckedTargets, type EnhancedElement, type OnChangeCallback, type OnCheckAllCallback, type TotalCheckbox, CheckBox as default };

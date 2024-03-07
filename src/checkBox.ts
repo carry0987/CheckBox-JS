@@ -360,4 +360,6 @@ class CheckBox {
     }
 }
 
-export default CheckBox;
+export { CheckBox as default };
+export * from './interface/interfaces';
+export * from './type/types';

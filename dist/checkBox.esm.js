@@ -398,7 +398,7 @@ styleInject(css_248z);
 
 class CheckBox {
     static instances = [];
-    static version = '2.0.10';
+    static version = '2.0.11';
     static firstLoad = true;
     element = null;
     options = defaults;
