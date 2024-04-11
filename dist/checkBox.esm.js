@@ -14,9 +14,6 @@ var errorUtils = /*#__PURE__*/Object.freeze({
 function getElem(ele, mode, parent) {
     // Return generic Element type or NodeList
     if (typeof ele !== 'string') {
-        if (mode === 'all') {
-            return [ele];
-        }
         return ele;
     }
     let searchContext = document;
@@ -393,12 +390,12 @@ function styleInject(css, ref) {
   }
 }
 
-var css_248z = "/* Checkbox */\n.checkbox {\n    display: flex;\n    align-items: center;\n    margin: 5px 0;\n}\n\n.checkbox input[type=\"checkbox\"] {\n    position: relative;\n    border: none;\n    -webkit-appearance: none;\n    appearance: none;\n    cursor: pointer;\n    margin: 0;\n    width: auto;\n    height: auto;\n}\n\n.checkbox input[type=\"checkbox\"]:focus {\n    outline: none;\n}\n\n.checkmark {\n    cursor: pointer;\n    width: 20px;\n    height: 20px;\n    border: 2px solid #666666;\n    position: relative;\n    background: white;\n    border-radius: 3px;\n    transition: background-color 0.2s linear;\n}\n\n.checkmark::after {\n    content: '';\n    display: block;\n    position: absolute;\n    width: 100%;\n    height: 100%;\n    background-repeat: no-repeat;\n    background-position: center;\n    background-size: contain;\n    opacity: 0;\n    transition: opacity 0.2s linear;\n}\n\n.checkbox input[type=\"checkbox\"]:checked + .checkmark::after,\n.checkbox input[type=\"checkbox\"]:disabled + .checkmark::after {\n    opacity: 1;\n}\n\n.checkbox input[type=\"checkbox\"]:checked + .checkmark {\n    border-color: #2196f3;\n    background-color: #2196f3;\n}\n\n.checkbox input[type=\"checkbox\"]:disabled + .checkmark {\n    cursor: not-allowed;\n    border-color: #999999;\n}\n\n.checkbox input[type=\"checkbox\"]:disabled + .checkmark::after {\n    background-color: #999999;\n}\n\n.checkbox-label {\n    margin-left: 5px;\n}\n\n.checkbox-labeled {\n    cursor: pointer;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    -ms-user-select: none;\n    user-select: none;\n}\n";
+var css_248z = "/* Checkbox */\n.checkbox {\n    display: flex;\n    align-items: center;\n    margin: 5px 0;\n}\n\n.checkbox input[type=\"checkbox\"] {\n    position: relative;\n    border: none;\n    -webkit-appearance: none;\n    appearance: none;\n    cursor: pointer;\n    margin: 0;\n    width: auto;\n    height: auto;\n}\n\n.checkbox input[type=\"checkbox\"]:focus + .checkmark {\n    outline: none;\n    border: 2px solid #2196f3;\n}\n\n.checkmark {\n    cursor: pointer;\n    width: 20px;\n    height: 20px;\n    border: 2px solid #666666;\n    position: relative;\n    background: white;\n    border-radius: 3px;\n    transition: background-color 0.2s linear;\n}\n\n.checkmark::after {\n    content: '';\n    display: block;\n    position: absolute;\n    width: 100%;\n    height: 100%;\n    background-repeat: no-repeat;\n    background-position: center;\n    background-size: contain;\n    opacity: 0;\n    transition: opacity 0.2s linear;\n}\n\n.checkbox input[type=\"checkbox\"]:checked + .checkmark::after,\n.checkbox input[type=\"checkbox\"]:disabled + .checkmark::after {\n    opacity: 1;\n}\n\n.checkbox input[type=\"checkbox\"]:checked + .checkmark {\n    border-color: #2196f3;\n    background-color: #2196f3;\n}\n\n.checkbox input[type=\"checkbox\"]:disabled + .checkmark {\n    cursor: not-allowed;\n    border-color: #999999;\n}\n\n.checkbox input[type=\"checkbox\"]:disabled + .checkmark::after {\n    background-color: #999999;\n}\n\n.checkbox-label {\n    margin-left: 5px;\n}\n\n.checkbox-labeled {\n    cursor: pointer;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    -ms-user-select: none;\n    user-select: none;\n}\n";
 styleInject(css_248z);
 
 class CheckBox {
     static instances = [];
-    static version = '2.0.11';
+    static version = '2.0.12';
     static firstLoad = true;
     element = null;
     options = defaults;
