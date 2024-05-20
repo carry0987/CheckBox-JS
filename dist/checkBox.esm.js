@@ -55,6 +55,15 @@ const replaceRule = {
 function isObject(item) {
     return typeof item === 'object' && item !== null && !Array.isArray(item);
 }
+function isArray(item) {
+    return Array.isArray(item);
+}
+function isEmpty(str) {
+    if (typeof str === 'number') {
+        return false;
+    }
+    return !str || (typeof str === 'string' && str.length === 0);
+}
 function deepMerge(target, ...sources) {
     if (!sources.length)
         return target;
@@ -65,9 +74,9 @@ function deepMerge(target, ...sources) {
                 const sourceKey = key;
                 const value = source[sourceKey];
                 const targetKey = key;
-                if (isObject(value)) {
+                if (isObject(value) || isArray(value)) {
                     if (!target[targetKey] || typeof target[targetKey] !== 'object') {
-                        target[targetKey] = {};
+                        target[targetKey] = Array.isArray(value) ? [] : {};
                     }
                     deepMerge(target[targetKey], value);
                 }
@@ -122,12 +131,6 @@ function removeStylesheet(id = null) {
     if (styleElement && styleElement.parentNode) {
         styleElement.parentNode.removeChild(styleElement);
     }
-}
-function isEmpty(str) {
-    if (typeof str === 'number') {
-        return false;
-    }
-    return !str || (typeof str === 'string' && str.length === 0);
 }
 function generateRandom(length = 8) {
     return Math.random().toString(36).substring(2, 2 + length);
@@ -367,7 +370,7 @@ function styleInject(css, ref) {
   if ( ref === void 0 ) ref = {};
   var insertAt = ref.insertAt;
 
-  if (!css || typeof document === 'undefined') { return; }
+  if (typeof document === 'undefined') { return; }
 
   var head = document.head || document.getElementsByTagName('head')[0];
   var style = document.createElement('style');
@@ -390,12 +393,12 @@ function styleInject(css, ref) {
   }
 }
 
-var css_248z = "/* Checkbox */\n.checkbox {\n    display: flex;\n    align-items: center;\n    margin: 5px 0;\n}\n\n.checkbox input[type=\"checkbox\"] {\n    position: relative;\n    border: none;\n    -webkit-appearance: none;\n    appearance: none;\n    cursor: pointer;\n    margin: 0;\n    width: auto;\n    height: auto;\n}\n\n.checkbox input[type=\"checkbox\"]:focus + .checkmark {\n    outline: none;\n    border: 2px solid #2196f3;\n}\n\n.checkmark {\n    cursor: pointer;\n    width: 20px;\n    height: 20px;\n    border: 2px solid #666666;\n    position: relative;\n    background: white;\n    border-radius: 3px;\n    transition: background-color 0.2s linear;\n}\n\n.checkmark::after {\n    content: '';\n    display: block;\n    position: absolute;\n    width: 100%;\n    height: 100%;\n    background-repeat: no-repeat;\n    background-position: center;\n    background-size: contain;\n    opacity: 0;\n    transition: opacity 0.2s linear;\n}\n\n.checkbox input[type=\"checkbox\"]:checked + .checkmark::after,\n.checkbox input[type=\"checkbox\"]:disabled + .checkmark::after {\n    opacity: 1;\n}\n\n.checkbox input[type=\"checkbox\"]:checked + .checkmark {\n    border-color: #2196f3;\n    background-color: #2196f3;\n}\n\n.checkbox input[type=\"checkbox\"]:disabled + .checkmark {\n    cursor: not-allowed;\n    border-color: #999999;\n}\n\n.checkbox input[type=\"checkbox\"]:disabled + .checkmark::after {\n    background-color: #999999;\n}\n\n.checkbox-label {\n    margin-left: 5px;\n}\n\n.checkbox-labeled {\n    cursor: pointer;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    -ms-user-select: none;\n    user-select: none;\n}\n";
+var css_248z = "/* Checkbox */\n.checkbox {\n    display: flex;\n    align-items: center;\n    margin: 5px 0;\n}\n\n.checkbox input[type=\"checkbox\"] {\n    position: relative;\n    border: none;\n    -webkit-appearance: none;\n    appearance: none;\n    cursor: pointer;\n    margin: 0;\n    width: auto;\n    height: auto;\n}\n\n.checkbox input[type=\"checkbox\"]:focus + .checkmark {\n    outline: none;\n    border: 2px solid #2196f3;\n}\n\n.checkmark {\n    cursor: pointer;\n    width: 20px;\n    min-width: 20px;\n    height: 20px;\n    min-height: 20px;\n    border: 2px solid #666666;\n    position: relative;\n    background: white;\n    border-radius: 3px;\n    transition: background-color 0.2s linear;\n}\n\n.checkmark::after {\n    content: '';\n    display: block;\n    position: absolute;\n    width: 100%;\n    height: 100%;\n    background-repeat: no-repeat;\n    background-position: center;\n    background-size: contain;\n    opacity: 0;\n    transition: opacity 0.2s linear;\n}\n\n.checkbox input[type=\"checkbox\"]:checked + .checkmark::after,\n.checkbox input[type=\"checkbox\"]:disabled + .checkmark::after {\n    opacity: 1;\n}\n\n.checkbox input[type=\"checkbox\"]:checked + .checkmark {\n    border-color: #2196f3;\n    background-color: #2196f3;\n}\n\n.checkbox input[type=\"checkbox\"]:disabled + .checkmark {\n    cursor: not-allowed;\n    border-color: #999999;\n}\n\n.checkbox input[type=\"checkbox\"]:disabled + .checkmark::after {\n    background-color: #999999;\n}\n\n.checkbox-label {\n    margin-left: 5px;\n}\n\n.checkbox-labeled {\n    cursor: pointer;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    -ms-user-select: none;\n    user-select: none;\n}\n";
 styleInject(css_248z);
 
 class CheckBox {
     static instances = [];
-    static version = '2.0.12';
+    static version = '2.0.13';
     static firstLoad = true;
     element = null;
     options = defaults;
