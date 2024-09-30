@@ -1,15 +1,23 @@
 {
   "name": "@carry0987/check-box",
-  "version": "2.0.13",
+  "version": "2.1.0",
   "description": "A library for create and manage checkbox elements",
   "type": "module",
   "main": "dist/checkBox.min.js",
   "module": "dist/checkBox.esm.js",
-  "types": "dist/checkBox.d.ts",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "umd": "./dist/checkBox.min.js",
+      "import": "./dist/checkBox.esm.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./theme/checkBox.min.css": "./dist/theme/checkBox.min.css"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "rollup --config rollup.config.js",
-    "build": "rollup --config rollup.config.js --environment BUILD:production"
+    "start": "rollup --config rollup.config.ts --configPlugin typescript",
+    "build": "rollup --config rollup.config.ts --configPlugin typescript --environment BUILD:production"
   },
   "files": [
     "dist"
@@ -28,15 +36,15 @@
   },
   "homepage": "https://github.com/carry0987/CheckBox-JS#readme",
   "devDependencies": {
-    "@carry0987/utils": "^3.3.13",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-replace": "^5.0.5",
+    "@carry0987/utils": "^3.7.4",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-replace": "^6.0.1",
     "@rollup/plugin-terser": "^0.4.4",
-    "@rollup/plugin-typescript": "^11.1.6",
-    "rollup": "^4.17.2",
-    "rollup-plugin-delete": "^2.0.0",
+    "@rollup/plugin-typescript": "^12.1.0",
+    "rollup": "^4.22.5",
+    "rollup-plugin-delete": "^2.1.0",
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-postcss": "^4.0.2",
-    "tslib": "^2.6.2"
+    "tslib": "^2.7.0"
   }
 }

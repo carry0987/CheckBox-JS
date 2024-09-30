@@ -53,16 +53,30 @@ const replaceRule = {
     to: '.utils-'
 };
 function isObject(item) {
-    return typeof item === 'object' && item !== null && !Array.isArray(item);
+    return typeof item === 'object' && item !== null && !isArray(item);
 }
 function isArray(item) {
     return Array.isArray(item);
 }
-function isEmpty(str) {
-    if (typeof str === 'number') {
+function isEmpty(value) {
+    // Check for number
+    if (typeof value === 'number') {
         return false;
     }
-    return !str || (typeof str === 'string' && str.length === 0);
+    // Check for string
+    if (typeof value === 'string' && value.length === 0) {
+        return true;
+    }
+    // Check for array
+    if (isArray(value) && value.length === 0) {
+        return true;
+    }
+    // Check for object
+    if (isObject(value) && Object.keys(value).length === 0) {
+        return true;
+    }
+    // Check for any falsy values
+    return !value;
 }
 function deepMerge(target, ...sources) {
     if (!sources.length)
@@ -76,7 +90,7 @@ function deepMerge(target, ...sources) {
                 const targetKey = key;
                 if (isObject(value) || isArray(value)) {
                     if (!target[targetKey] || typeof target[targetKey] !== 'object') {
-                        target[targetKey] = Array.isArray(value) ? [] : {};
+                        target[targetKey] = isArray(value) ? [] : {};
                     }
                     deepMerge(target[targetKey], value);
                 }
@@ -133,7 +147,14 @@ function removeStylesheet(id = null) {
     }
 }
 function generateRandom(length = 8) {
-    return Math.random().toString(36).substring(2, 2 + length);
+    let result = '';
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * charactersLength);
+        result += characters[randomIndex];
+    }
+    return result;
 }
 
 function addEventListener(element, eventName, handler, options) {
@@ -302,6 +323,16 @@ class Utils {
             ele.removeAttribute('checked');
         }
     }
+    static toggleDisableStatus(ele, disabled) {
+        if (disabled) {
+            ele.disabled = true;
+            ele.setAttribute('disabled', 'disabled');
+        }
+        else {
+            ele.disabled = false;
+            ele.removeAttribute('disabled');
+        }
+    }
     static toggleCheckAll(eles, total) {
         if (eles.length === 0)
             return;
@@ -366,39 +397,9 @@ const defaults = {
     onCheckAll: () => { },
 };
 
-function styleInject(css, ref) {
-  if ( ref === void 0 ) ref = {};
-  var insertAt = ref.insertAt;
-
-  if (typeof document === 'undefined') { return; }
-
-  var head = document.head || document.getElementsByTagName('head')[0];
-  var style = document.createElement('style');
-  style.type = 'text/css';
-
-  if (insertAt === 'top') {
-    if (head.firstChild) {
-      head.insertBefore(style, head.firstChild);
-    } else {
-      head.appendChild(style);
-    }
-  } else {
-    head.appendChild(style);
-  }
-
-  if (style.styleSheet) {
-    style.styleSheet.cssText = css;
-  } else {
-    style.appendChild(document.createTextNode(css));
-  }
-}
-
-var css_248z = "/* Checkbox */\n.checkbox {\n    display: flex;\n    align-items: center;\n    margin: 5px 0;\n}\n\n.checkbox input[type=\"checkbox\"] {\n    position: relative;\n    border: none;\n    -webkit-appearance: none;\n    appearance: none;\n    cursor: pointer;\n    margin: 0;\n    width: auto;\n    height: auto;\n}\n\n.checkbox input[type=\"checkbox\"]:focus + .checkmark {\n    outline: none;\n    border: 2px solid #2196f3;\n}\n\n.checkmark {\n    cursor: pointer;\n    width: 20px;\n    min-width: 20px;\n    height: 20px;\n    min-height: 20px;\n    border: 2px solid #666666;\n    position: relative;\n    background: white;\n    border-radius: 3px;\n    transition: background-color 0.2s linear;\n}\n\n.checkmark::after {\n    content: '';\n    display: block;\n    position: absolute;\n    width: 100%;\n    height: 100%;\n    background-repeat: no-repeat;\n    background-position: center;\n    background-size: contain;\n    opacity: 0;\n    transition: opacity 0.2s linear;\n}\n\n.checkbox input[type=\"checkbox\"]:checked + .checkmark::after,\n.checkbox input[type=\"checkbox\"]:disabled + .checkmark::after {\n    opacity: 1;\n}\n\n.checkbox input[type=\"checkbox\"]:checked + .checkmark {\n    border-color: #2196f3;\n    background-color: #2196f3;\n}\n\n.checkbox input[type=\"checkbox\"]:disabled + .checkmark {\n    cursor: not-allowed;\n    border-color: #999999;\n}\n\n.checkbox input[type=\"checkbox\"]:disabled + .checkmark::after {\n    background-color: #999999;\n}\n\n.checkbox-label {\n    margin-left: 5px;\n}\n\n.checkbox-labeled {\n    cursor: pointer;\n    -webkit-user-select: none;\n    -moz-user-select: none;\n    -ms-user-select: none;\n    user-select: none;\n}\n";
-styleInject(css_248z);
-
 class CheckBox {
     static instances = [];
-    static version = '2.0.13';
+    static version = '2.1.0';
     static firstLoad = true;
     element = null;
     options = defaults;
@@ -554,6 +555,10 @@ class CheckBox {
             cloneEle.labelToRestore = labelToRestore;
             // Store the cloned check all checkbox
             this.checkAllElement.push(cloneEle);
+            // Disable check all if there are no input checkboxes
+            if (this.total.input.length === 0) {
+                Utils.toggleDisableStatus(cloneEle, true);
+            }
             // Set the initial check status based on provided options
             if (this.options.checked === true || checkAll.checked) {
                 Utils.toggleCheckStatus(cloneEle, true);

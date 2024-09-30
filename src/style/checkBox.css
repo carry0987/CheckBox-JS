@@ -47,9 +47,12 @@
     transition: opacity 0.2s linear;
 }
 
-.checkbox input[type="checkbox"]:checked + .checkmark::after,
-.checkbox input[type="checkbox"]:disabled + .checkmark::after {
+.checkbox input[type="checkbox"]:checked + .checkmark::after {
     opacity: 1;
+}
+
+.checkbox input[type="checkbox"]:disabled + .checkmark::after {
+    opacity: 0;
 }
 
 .checkbox input[type="checkbox"]:checked + .checkmark {

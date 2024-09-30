@@ -12,7 +12,7 @@ class CheckBox {
     private options: CheckBoxOption = defaults;
     private id: number = 0;
     private allElement: EnhancedElement[] = []; // Store all elements here which will be used in destroy method
-    private total: TotalCheckbox = {input: [], checked: [], list: []};
+    private total: TotalCheckbox = { input: [], checked: [], list: [] };
     private checkAllElement: EnhancedElement[] = [];
 
     // Methods for external use
@@ -181,6 +181,11 @@ class CheckBox {
 
             // Store the cloned check all checkbox
             this.checkAllElement.push(cloneEle);
+
+            // Disable check all if there are no input checkboxes
+            if (this.total.input.length === 0) {
+                Utils.toggleDisableStatus(cloneEle, true);
+            }
 
             // Set the initial check status based on provided options
             if (this.options.checked === true || checkAll.checked) {

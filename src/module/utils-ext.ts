@@ -163,6 +163,16 @@ class Utils {
         }
     }
 
+    static toggleDisableStatus(ele: EnhancedElement, disabled: boolean): void {
+        if (disabled) {
+            ele.disabled = true;
+            ele.setAttribute('disabled', 'disabled');
+        } else {
+            ele.disabled = false;
+            ele.removeAttribute('disabled');
+        }
+    }
+
     static toggleCheckAll(eles: EnhancedElement[], total?: TotalCheckbox): void {
         if (eles.length === 0) return;
         eles.forEach(ele => {
