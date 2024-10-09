@@ -42,9 +42,7 @@ class CheckBox {
         let elem: NodeListOf<HTMLInputElement> | Array<HTMLInputElement> | null = null;
         if (typeof elements === 'string') {
             elem = Utils.getElem<HTMLInputElement>(elements, 'all');
-        } else if (elements instanceof NodeList) {
-            elem = elements;
-        } else if (elements instanceof Array) {
+        } else if (elements instanceof NodeList || elements instanceof Array) {
             elem = elements;
         } else if (elements instanceof HTMLInputElement) {
             elem = [elements];

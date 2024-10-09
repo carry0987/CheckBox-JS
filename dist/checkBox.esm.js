@@ -399,7 +399,7 @@ const reportInfo = (vars, showType = false) => {
 
 class CheckBox {
     static instances = [];
-    static version = '2.2.2';
+    static version = '2.2.3';
     static firstLoad = true;
     element = null;
     options = defaults;
@@ -424,10 +424,7 @@ class CheckBox {
         if (typeof elements === 'string') {
             elem = Utils.getElem(elements, 'all');
         }
-        else if (elements instanceof NodeList) {
-            elem = elements;
-        }
-        else if (elements instanceof Array) {
+        else if (elements instanceof NodeList || elements instanceof Array) {
             elem = elements;
         }
         else if (elements instanceof HTMLInputElement) {
