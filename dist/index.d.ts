@@ -1,5 +1,13 @@
+type InputElement = string | HTMLInputElement | Array<HTMLInputElement> | NodeListOf<HTMLInputElement> | null;
 type CheckedTargets = boolean | string | number | Array<string | number> | null;
 type CheckAllButtons = string | HTMLInputElement | Array<string | HTMLInputElement> | null;
+
+type types_CheckAllButtons = CheckAllButtons;
+type types_CheckedTargets = CheckedTargets;
+type types_InputElement = InputElement;
+declare namespace types {
+  export type { types_CheckAllButtons as CheckAllButtons, types_CheckedTargets as CheckedTargets, types_InputElement as InputElement };
+}
 
 interface OnChangeCallback {
     (total: TotalCheckbox, target?: EnhancedElement): void;
@@ -40,6 +48,17 @@ interface EnhancedElement extends HTMLInputElement {
     labelToRestore?: HTMLLabelElement;
 }
 
+type interfaces_CheckBoxOption = CheckBoxOption;
+type interfaces_CheckboxTemplate = CheckboxTemplate;
+type interfaces_CheckboxTitleDetails = CheckboxTitleDetails;
+type interfaces_EnhancedElement = EnhancedElement;
+type interfaces_OnChangeCallback = OnChangeCallback;
+type interfaces_OnCheckAllCallback = OnCheckAllCallback;
+type interfaces_TotalCheckbox = TotalCheckbox;
+declare namespace interfaces {
+  export type { interfaces_CheckBoxOption as CheckBoxOption, interfaces_CheckboxTemplate as CheckboxTemplate, interfaces_CheckboxTitleDetails as CheckboxTitleDetails, interfaces_EnhancedElement as EnhancedElement, interfaces_OnChangeCallback as OnChangeCallback, interfaces_OnCheckAllCallback as OnCheckAllCallback, interfaces_TotalCheckbox as TotalCheckbox };
+}
+
 declare class CheckBox {
     private static instances;
     private static version;
@@ -52,7 +71,7 @@ declare class CheckBox {
     private checkAllElement;
     private onChangeCallback?;
     private onCheckAllCallback?;
-    constructor(element: string | HTMLInputElement, option: Partial<CheckBoxOption>);
+    constructor(element: InputElement, option: Partial<CheckBoxOption>);
     private init;
     private injectStyles;
     private setupCallbacks;
@@ -79,4 +98,4 @@ declare class CheckBox {
     static destroyAll(): void;
 }
 
-export { type CheckAllButtons, type CheckBoxOption, type CheckboxTemplate, type CheckboxTitleDetails, type CheckedTargets, type EnhancedElement, type OnChangeCallback, type OnCheckAllCallback, type TotalCheckbox, CheckBox as default };
+export { CheckBox, interfaces as CheckBoxInterface, types as CheckBoxType };

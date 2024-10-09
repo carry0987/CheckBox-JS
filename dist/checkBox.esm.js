@@ -1,3 +1,14 @@
+const defaults = {
+    checked: null,
+    checkMark: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cG9seWxpbmUgcG9pbnRzPSIyMCA2IDkgMTcgNCAxMiI+PC9wb2x5bGluZT48L3N2Zz4=',
+    checkAll: null,
+    allowShiftKey: false,
+    bindLabel: true,
+    styles: {},
+    onChange: () => { },
+    onCheckAll: () => { }
+};
+
 function reportError(...error) {
     console.error(...error);
 }
@@ -386,20 +397,9 @@ const reportInfo = (vars, showType = false) => {
     }
 };
 
-const defaults = {
-    checked: null,
-    checkMark: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cG9seWxpbmUgcG9pbnRzPSIyMCA2IDkgMTcgNCAxMiI+PC9wb2x5bGluZT48L3N2Zz4=',
-    checkAll: null,
-    allowShiftKey: false,
-    bindLabel: true,
-    styles: {},
-    onChange: () => { },
-    onCheckAll: () => { }
-};
-
 class CheckBox {
     static instances = [];
-    static version = '2.1.1';
+    static version = '2.2.0';
     static firstLoad = true;
     element = null;
     options = defaults;
@@ -423,6 +423,12 @@ class CheckBox {
         let elem = null;
         if (typeof elements === 'string') {
             elem = Utils.getElem(elements, 'all');
+        }
+        else if (elements instanceof NodeList) {
+            elem = elements;
+        }
+        else if (elements instanceof Array) {
+            elem = elements;
         }
         else if (elements instanceof HTMLInputElement) {
             elem = [elements];
@@ -720,4 +726,12 @@ class CheckBox {
     }
 }
 
-export { CheckBox as default };
+var interfaces = /*#__PURE__*/Object.freeze({
+    __proto__: null
+});
+
+var types = /*#__PURE__*/Object.freeze({
+    __proto__: null
+});
+
+export { CheckBox, interfaces as CheckBoxInterface, types as CheckBoxType };

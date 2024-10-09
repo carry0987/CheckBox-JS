@@ -30,7 +30,7 @@
     </div>
     <script src="dist/checkBox.min.js"></script>
     <script type="text/javascript">
-    let checkBox = new CheckBox('#app .check-box-list input', {
+    let checkBox = new checkBoxjs.CheckBox('#app .check-box-list input', {
         bindLabel: true,
         checkAll: ['#check-all', '#check-all-2'],
         allowShiftKey: true,
@@ -51,9 +51,9 @@
         console.log('Total: ', total);
         if (target) console.log(target);
     };
-    document.getElementById('version').innerText = CheckBox.version;
-    // CheckBox.destroyAll();
-    // checkBox = new CheckBox('#app .check-box-list input', {
+    document.getElementById('version').innerText = checkBoxjs.CheckBox.version;
+    // checkBoxjs.CheckBox.destroyAll();
+    // checkBox = new checkBoxjs.CheckBox('#app .check-box-list input', {
     //     bindLabel: true,
     //     checkAll: '#check-all',
     //     onChange: (total, target) => {

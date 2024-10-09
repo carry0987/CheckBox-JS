@@ -2,10 +2,12 @@
     "compilerOptions": {
         "module": "ESNext",
         "target": "ESNext",
-        "moduleResolution": "node",
+        "moduleResolution": "Node",
         "esModuleInterop": true,
         "importHelpers": true,
         "strict": true,
+        "jsx": "react-jsx",
+        "jsxImportSource": "preact",
         "declaration": true,
         "declarationDir": "dist/dts/",
         "paths": {
@@ -14,7 +16,8 @@
     },
     "include": [
         "src/**/*",
+        "test/**/*",
         "rollup.config.ts"
     ],
-    "exclude": ["node_modules", "dist"]
+    "exclude": ["node_modules", "dist", "**/__snapshots__/**/*"]
 }

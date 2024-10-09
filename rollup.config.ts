@@ -1,3 +1,4 @@
+import { RollupOptions } from 'rollup';
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 import replace from '@rollup/plugin-replace';
@@ -11,15 +12,15 @@ import path from 'path';
 
 const pkg = createRequire(import.meta.url)('./package.json');
 const isProduction = process.env.BUILD === 'production';
-const sourceFile = 'src/checkBox.ts';
+const sourceFile = 'src/index.ts';
 
-const jsConfig = {
+const jsConfig: RollupOptions = {
     input: sourceFile,
     output: [
         {
             file: pkg.exports['.']['umd'],
             format: 'umd',
-            name: 'CheckBox',
+            name: 'checkBoxjs',
             plugins: isProduction ? [terser()] : []
         }
     ],
@@ -39,7 +40,7 @@ const jsConfig = {
     ]
 };
 
-const esConfig = {
+const esConfig: RollupOptions = {
     input: sourceFile,
     output: [
         {
@@ -63,7 +64,7 @@ const esConfig = {
     ]
 };
 
-const dtsConfig = {
+const dtsConfig: RollupOptions = {
     input: sourceFile,
     output: {
         file: pkg.exports['.']['types'],

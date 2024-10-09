@@ -1,3 +1,4 @@
+import { defaults } from '@/component/config';
 import Utils from '@/module/utils-ext';
 import reportInfo from '@/module/report';
 import {
@@ -7,14 +8,14 @@ import {
     TotalCheckbox,
     EnhancedElement
 } from '@/interface/interfaces';
-import { defaults } from '@/module/config';
+import { InputElement } from '@/type/types';
 import '@/theme/index.scss';
 
 class CheckBox {
     private static instances: CheckBox[] = [];
     private static version: string = '__version__';
     private static firstLoad: boolean = true;
-    private element: string | HTMLInputElement | null = null;
+    private element: InputElement = null;
     private options: CheckBoxOption = defaults;
     private id: number = 0;
     private allElement: EnhancedElement[] = []; // Store all elements here which will be used in destroy method
@@ -25,7 +26,7 @@ class CheckBox {
     private onChangeCallback?: OnChangeCallback;
     private onCheckAllCallback?: OnCheckAllCallback;
 
-    constructor(element: string | HTMLInputElement, option: Partial<CheckBoxOption>) {
+    constructor(element: InputElement, option: Partial<CheckBoxOption>) {
         this.init(element, option, CheckBox.instances.length);
         CheckBox.instances.push(this);
 
@@ -37,10 +38,14 @@ class CheckBox {
         CheckBox.firstLoad = false;
     }
 
-    private init(elements: string | HTMLInputElement, option: Partial<CheckBoxOption>, id: number) {
+    private init(elements: InputElement, option: Partial<CheckBoxOption>, id: number) {
         let elem: NodeListOf<HTMLInputElement> | Array<HTMLInputElement> | null = null;
         if (typeof elements === 'string') {
             elem = Utils.getElem<HTMLInputElement>(elements, 'all');
+        } else if (elements instanceof NodeList) {
+            elem = elements;
+        } else if (elements instanceof Array) {
+            elem = elements;
         } else if (elements instanceof HTMLInputElement) {
             elem = [elements];
         }
@@ -380,6 +385,4 @@ class CheckBox {
     }
 }
 
-export { CheckBox as default };
-export * from '@/interface/interfaces';
-export * from '@/type/types';
+export { CheckBox };
