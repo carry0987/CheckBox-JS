@@ -26,6 +26,7 @@ Here is a simple example to use CheckBox-JS
     </div>
     <input type="checkbox" id="check-all-2" title="Check All">
 </div>
+<link rel="stylesheet" href="dist/theme/checkBox.min.css">
 <script src="dist/checkBox.min.js"></script>
 <script type="text/javascript">
 let checkBox = new checkBoxjs.CheckBox('#app .check-box-list input', {
@@ -56,6 +57,7 @@ document.getElementById('version').innerText = checkBoxjs.CheckBox.version;
 #### ES Module
 ```ts
 import { CheckBox } from '@carry0987/check-box';
+import '@carry0987/check-box/theme/checkBox.min.css';
 
 let checkBox = new CheckBox('#app .check-box-list input', {
     //...
