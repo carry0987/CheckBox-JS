@@ -1,4 +1,10 @@
+# Dependencies
+node_modules
 
+# Misc
 .DS_Store
-node_modules/
-package-lock.json
+
+# Logs
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*

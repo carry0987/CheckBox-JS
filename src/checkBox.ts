@@ -1,8 +1,14 @@
-import Utils from './module/utils-ext';
-import reportInfo from './module/report';
-import { OnChangeCallback, OnCheckAllCallback, CheckBoxOption, TotalCheckbox, EnhancedElement } from './interface/interfaces';
-import { defaults } from './module/config';
-import './style/checkBox.css';
+import Utils from '@/module/utils-ext';
+import reportInfo from '@/module/report';
+import {
+    OnChangeCallback,
+    OnCheckAllCallback,
+    CheckBoxOption,
+    TotalCheckbox,
+    EnhancedElement
+} from '@/interface/interfaces';
+import { defaults } from '@/module/config';
+import '@/theme/index.scss';
 
 class CheckBox {
     private static instances: CheckBox[] = [];
@@ -81,9 +87,13 @@ class CheckBox {
 
     private setupCallbacks(): void {
         // Handle onChange event
-        this.onChange = (total, target) => {if (this.options?.onChange) this.options.onChange(total, target)};
+        this.onChange = (total, target) => {
+            if (this.options?.onChange) this.options.onChange(total, target);
+        };
         // Handle onCheckAll event
-        this.onCheckAll = (checkedAll) => {if (this.options?.onCheckAll) this.options.onCheckAll(checkedAll)};
+        this.onCheckAll = (checkedAll) => {
+            if (this.options?.onCheckAll) this.options.onCheckAll(checkedAll);
+        };
     }
 
     private processCheckbox(ele: HTMLInputElement, index: number): void {
@@ -151,7 +161,7 @@ class CheckBox {
         const checkAllElements = Utils.getCheckAllElements(this.options.checkAll);
         if (checkAllElements.length === 0) return;
 
-        checkAllElements.forEach(checkAll => {
+        checkAllElements.forEach((checkAll) => {
             if (!checkAll || checkAll.type !== 'checkbox') return;
             if (checkAll.hasAttribute('data-checkbox')) return;
             checkAll.setAttribute('data-checkbox', 'true');
@@ -167,7 +177,12 @@ class CheckBox {
             }
 
             // Insert the check all checkbox template
-            const { cloneEle, templateNode, labelNode } = Utils.insertCheckbox(this.id.toString(), checkAll, randomID, remainLabel);
+            const { cloneEle, templateNode, labelNode } = Utils.insertCheckbox(
+                this.id.toString(),
+                checkAll,
+                randomID,
+                remainLabel
+            );
 
             // Replace the original checkbox with the new template
             checkAll.parentNode?.replaceChild(templateNode.firstElementChild || templateNode, checkAll);
@@ -224,21 +239,21 @@ class CheckBox {
         // Update the check all status and invoke the callback
         this.checkBoxChange(false);
         if (this.onCheckAllCallback) this.onCheckAllCallback(checkedAll);
-    }
+    };
 
     private updateTotal(): void {
         // Update total.input to reflect the current list of checkboxes
         this.total.input = [...this.allElement];
         // Get the current list of checked elements
-        const currentChecked = this.allElement.filter(checkbox => checkbox.checked);
+        const currentChecked = this.allElement.filter((checkbox) => checkbox.checked);
         // Keep the order of elements in total.checked the same, add new checked elements to the end
         // And filter out elements that are no longer checked
-        this.total.checked = this.total.checked.filter(checkbox => checkbox.checked);
+        this.total.checked = this.total.checked.filter((checkbox) => checkbox.checked);
         // Find new checked elements and add them to the end
-        const newChecked = currentChecked.filter(checkbox => !this.total.checked.includes(checkbox));
+        const newChecked = currentChecked.filter((checkbox) => !this.total.checked.includes(checkbox));
         this.total.checked.push(...newChecked);
         // Update total.list to reflect the new order of checked items
-        this.total.list = this.total.checked.map(checkbox => checkbox.value);
+        this.total.list = this.total.checked.map((checkbox) => checkbox.value);
     }
 
     private updateCheckAllStatus(): void {
@@ -281,7 +296,7 @@ class CheckBox {
             this.updateCheckAllStatus();
             this.dispatchCheckboxChangeEvent();
         }
-    }
+    };
 
     private getLastChecked(excludeShift: boolean = false): EnhancedElement | null {
         const checkedElements = this.total.checked;
@@ -297,7 +312,7 @@ class CheckBox {
         // Reset firstLoad flag
         CheckBox.firstLoad = false;
         // Remove event listeners from all elements
-        this.allElement.forEach(element => {
+        this.allElement.forEach((element) => {
             Utils.restoreElement(element);
         });
 
@@ -366,5 +381,5 @@ class CheckBox {
 }
 
 export { CheckBox as default };
-export * from './interface/interfaces';
-export * from './type/types';
+export * from '@/interface/interfaces';
+export * from '@/type/types';

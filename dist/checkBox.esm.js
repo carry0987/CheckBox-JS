@@ -221,7 +221,7 @@ class Utils {
             return [];
         let checkAllElements = [];
         if (Array.isArray(ele)) {
-            ele.forEach(elem => {
+            ele.forEach((elem) => {
                 if (typeof elem === 'string') {
                     checkAllElements.push(...Utils.getElem(elem, 'all'));
                 }
@@ -236,7 +236,7 @@ class Utils {
         else if (ele instanceof HTMLInputElement) {
             checkAllElements.push(ele);
         }
-        return checkAllElements.filter(elem => elem !== null);
+        return checkAllElements.filter((elem) => elem !== null);
     }
     static handleCheckboxTitle(ele, labelSibling) {
         let title = ele.title || ele.dataset.checkboxTitle || null;
@@ -249,7 +249,7 @@ class Utils {
             const dataCheckboxFor = labelSibling.dataset.checkboxFor;
             const dataCheckboxId = ele.dataset.checkboxId;
             remainLabel = !Utils.isEmpty(ele.id) && htmlFor === ele.id;
-            isValidLabel = !Utils.isEmpty(ele.id) && (dataCheckboxFor === ele.id);
+            isValidLabel = !Utils.isEmpty(ele.id) && dataCheckboxFor === ele.id;
             if (!Utils.isEmpty(dataCheckboxId) && dataCheckboxFor === dataCheckboxId) {
                 randomID = Utils.isEmpty(ele.id) && Utils.isEmpty(htmlFor) ? 'check-' + Utils.generateRandom(6) : null;
                 isValidLabel = true;
@@ -336,7 +336,7 @@ class Utils {
     static toggleCheckAll(eles, total) {
         if (eles.length === 0)
             return;
-        eles.forEach(ele => {
+        eles.forEach((ele) => {
             if (!total || !total.checked || !total.input) {
                 Utils.toggleCheckStatus(ele, false);
                 return;
@@ -394,12 +394,12 @@ const defaults = {
     bindLabel: true,
     styles: {},
     onChange: () => { },
-    onCheckAll: () => { },
+    onCheckAll: () => { }
 };
 
 class CheckBox {
     static instances = [];
-    static version = '2.1.0';
+    static version = '2.1.1';
     static firstLoad = true;
     element = null;
     options = defaults;
@@ -463,11 +463,15 @@ class CheckBox {
     }
     setupCallbacks() {
         // Handle onChange event
-        this.onChange = (total, target) => { if (this.options?.onChange)
-            this.options.onChange(total, target); };
+        this.onChange = (total, target) => {
+            if (this.options?.onChange)
+                this.options.onChange(total, target);
+        };
         // Handle onCheckAll event
-        this.onCheckAll = (checkedAll) => { if (this.options?.onCheckAll)
-            this.options.onCheckAll(checkedAll); };
+        this.onCheckAll = (checkedAll) => {
+            if (this.options?.onCheckAll)
+                this.options.onCheckAll(checkedAll);
+        };
     }
     processCheckbox(ele, index) {
         if (ele.type !== 'checkbox')
@@ -530,7 +534,7 @@ class CheckBox {
         const checkAllElements = Utils.getCheckAllElements(this.options.checkAll);
         if (checkAllElements.length === 0)
             return;
-        checkAllElements.forEach(checkAll => {
+        checkAllElements.forEach((checkAll) => {
             if (!checkAll || checkAll.type !== 'checkbox')
                 return;
             if (checkAll.hasAttribute('data-checkbox'))
@@ -597,15 +601,15 @@ class CheckBox {
         // Update total.input to reflect the current list of checkboxes
         this.total.input = [...this.allElement];
         // Get the current list of checked elements
-        const currentChecked = this.allElement.filter(checkbox => checkbox.checked);
+        const currentChecked = this.allElement.filter((checkbox) => checkbox.checked);
         // Keep the order of elements in total.checked the same, add new checked elements to the end
         // And filter out elements that are no longer checked
-        this.total.checked = this.total.checked.filter(checkbox => checkbox.checked);
+        this.total.checked = this.total.checked.filter((checkbox) => checkbox.checked);
         // Find new checked elements and add them to the end
-        const newChecked = currentChecked.filter(checkbox => !this.total.checked.includes(checkbox));
+        const newChecked = currentChecked.filter((checkbox) => !this.total.checked.includes(checkbox));
         this.total.checked.push(...newChecked);
         // Update total.list to reflect the new order of checked items
-        this.total.list = this.total.checked.map(checkbox => checkbox.value);
+        this.total.list = this.total.checked.map((checkbox) => checkbox.value);
     }
     updateCheckAllStatus() {
         if (this.checkAllElement.length > 0) {
@@ -658,7 +662,7 @@ class CheckBox {
         // Reset firstLoad flag
         CheckBox.firstLoad = false;
         // Remove event listeners from all elements
-        this.allElement.forEach(element => {
+        this.allElement.forEach((element) => {
             Utils.restoreElement(element);
         });
         // Clear the checkAll event if it exists

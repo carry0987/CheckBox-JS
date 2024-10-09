@@ -9,10 +9,10 @@ import {
     deepMerge,
     generateRandom,
     injectStylesheet,
-    removeStylesheet,
+    removeStylesheet
 } from '@carry0987/utils';
-import { TotalCheckbox, CheckboxTitleDetails, CheckboxTemplate, EnhancedElement } from '../interface/interfaces';
-import { CheckAllButtons } from '../type/types';
+import { TotalCheckbox, CheckboxTitleDetails, CheckboxTemplate, EnhancedElement } from '@/interface/interfaces';
+import { CheckAllButtons } from '@/type/types';
 
 class Utils {
     static throwError = errorUtils.throwError;
@@ -44,7 +44,7 @@ class Utils {
         if (!ele) return [];
         let checkAllElements: HTMLInputElement[] = [];
         if (Array.isArray(ele)) {
-            ele.forEach(elem => {
+            ele.forEach((elem) => {
                 if (typeof elem === 'string') {
                     checkAllElements.push(...Utils.getElem<HTMLInputElement>(elem, 'all'));
                 } else if (elem instanceof HTMLInputElement) {
@@ -57,13 +57,10 @@ class Utils {
             checkAllElements.push(ele);
         }
 
-        return checkAllElements.filter(elem => elem !== null);
+        return checkAllElements.filter((elem) => elem !== null);
     }
 
-    static handleCheckboxTitle(
-        ele: HTMLElement, 
-        labelSibling: HTMLElement | null
-    ): CheckboxTitleDetails {
+    static handleCheckboxTitle(ele: HTMLElement, labelSibling: HTMLElement | null): CheckboxTitleDetails {
         let title: string | null = ele.title || ele.dataset.checkboxTitle || null;
         let remainLabel: boolean = false;
         let randomID: string | null = null;
@@ -75,7 +72,7 @@ class Utils {
             const dataCheckboxFor = labelSibling.dataset.checkboxFor;
             const dataCheckboxId = ele.dataset.checkboxId;
             remainLabel = !Utils.isEmpty(ele.id) && htmlFor === ele.id;
-            isValidLabel = !Utils.isEmpty(ele.id) && (dataCheckboxFor === ele.id);
+            isValidLabel = !Utils.isEmpty(ele.id) && dataCheckboxFor === ele.id;
             if (!Utils.isEmpty(dataCheckboxId) && dataCheckboxFor === dataCheckboxId) {
                 randomID = Utils.isEmpty(ele.id) && Utils.isEmpty(htmlFor) ? 'check-' + Utils.generateRandom(6) : null;
                 isValidLabel = true;
@@ -126,7 +123,7 @@ class Utils {
         // Replace the original element with the new one
         ele.parentNode!.replaceChild(templateNode.firstElementChild || templateNode, ele);
 
-        return {cloneEle, templateNode, labelNode};
+        return { cloneEle, templateNode, labelNode };
     }
 
     static insertCheckboxTitle(
@@ -175,7 +172,7 @@ class Utils {
 
     static toggleCheckAll(eles: EnhancedElement[], total?: TotalCheckbox): void {
         if (eles.length === 0) return;
-        eles.forEach(ele => {
+        eles.forEach((ele) => {
             if (!total || !total.checked || !total.input) {
                 Utils.toggleCheckStatus(ele, false);
                 return;
@@ -208,7 +205,7 @@ class Utils {
     }
 
     private static triggerShiftClick(cloneEle: EnhancedElement): void {
-        let event = Utils.createEvent('shift-click', {checkedElement: cloneEle});
+        let event = Utils.createEvent('shift-click', { checkedElement: cloneEle });
         Utils.dispatchEvent(event, cloneEle);
     }
 }

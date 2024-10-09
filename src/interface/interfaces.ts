@@ -1,4 +1,4 @@
-import { CheckedTargets, CheckAllButtons } from '../type/types';
+import { CheckedTargets, CheckAllButtons } from '@/type/types';
 
 export interface OnChangeCallback {
     (total: TotalCheckbox, target?: EnhancedElement): void;

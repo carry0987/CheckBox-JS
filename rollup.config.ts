@@ -1,6 +1,7 @@
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 import replace from '@rollup/plugin-replace';
+import tsConfigPaths from 'rollup-plugin-tsconfig-paths';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import { dts } from 'rollup-plugin-dts';
 import postcss from 'rollup-plugin-postcss';
@@ -29,6 +30,7 @@ const jsConfig = {
             sourceMap: false
         }),
         typescript(),
+        tsConfigPaths(),
         nodeResolve(),
         replace({
             preventAssignment: true,
@@ -52,6 +54,7 @@ const esConfig = {
             sourceMap: false
         }),
         typescript(),
+        tsConfigPaths(),
         nodeResolve(),
         replace({
             preventAssignment: true,
@@ -66,10 +69,11 @@ const dtsConfig = {
         file: pkg.exports['.']['types'],
         format: 'es'
     },
-    external: [/\.css$/u],
+    external: [/\.scss$/u],
     plugins: [
+        tsConfigPaths(),
         dts(),
-        del({ hook: 'buildEnd', targets: ['dist/*.d.ts', 'dist/interface', 'dist/module', 'dist/type'] })
+        del({ hook: 'buildEnd', targets: ['dist/dts'] })
     ]
 };
 

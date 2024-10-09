@@ -1,0 +1,82 @@
+// Checkbox
+.checkbox {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+
+    input[type='checkbox'] {
+        position: relative;
+        border: none;
+        -webkit-appearance: none;
+        appearance: none;
+        cursor: pointer;
+        margin: 0;
+        width: auto;
+        height: auto;
+
+        &:focus + .checkmark {
+            outline: none;
+            border: 2px solid #2196f3;
+        }
+
+        &:checked + .checkmark {
+            border-color: #2196f3;
+            background-color: #2196f3;
+
+            &::after {
+                opacity: 1;
+            }
+        }
+
+        &:disabled + .checkmark {
+            cursor: not-allowed;
+            border-color: #999999;
+
+            &::after {
+                background-color: #999999;
+            }
+
+            &::after {
+                opacity: 0;
+            }
+        }
+    }
+
+    .checkmark {
+        cursor: pointer;
+        width: 20px;
+        min-width: 20px;
+        height: 20px;
+        min-height: 20px;
+        border: 2px solid #666666;
+        position: relative;
+        background: white;
+        border-radius: 3px;
+        transition: background-color 0.2s linear;
+
+        &::after {
+            content: '';
+            display: block;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            opacity: 0;
+            transition: opacity 0.2s linear;
+        }
+    }
+
+    .checkbox-label {
+        margin-left: 5px;
+    }
+}
+
+.checkbox-labeled {
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
