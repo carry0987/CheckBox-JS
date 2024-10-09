@@ -10,7 +10,9 @@ describe('CheckBox Integration Test', () => {
                 <input type="checkbox" id="check-all" title="Check All" />
                 <div class="check-box-list">
                     <input type="checkbox" name="check-1" data-checkbox-id="check-1" value="Test-1" />
-                    <label data-checkbox-for="check-1" class="test">Check-1</label>
+                    <label data-checkbox-for="check-1" class="test">
+                        Check-1
+                    </label>
                     <input type="checkbox" name="check-2" id="check-2" value="Test-2" />
                     <label for="check-2">Check-2</label>
                     <input type="checkbox" name="check-3" id="check-3" value="Test-3" />
@@ -22,7 +24,7 @@ describe('CheckBox Integration Test', () => {
         const checkBox = new CheckBox(container.querySelectorAll('#app .check-box-list input'), {
             bindLabel: true,
             checkAll: ['#check-all'],
-            allowShiftKey: true,
+            allowShiftKey: true
         });
 
         // It should find 3 checkboxes
@@ -35,7 +37,9 @@ describe('CheckBox Integration Test', () => {
                 <input type="checkbox" id="check-all" title="Check All" />
                 <div class="check-box-list">
                     <input type="checkbox" name="check-1" data-checkbox-id="check-1" value="Test-1" />
-                    <label data-checkbox-for="check-1" class="test">Check-1</label>
+                    <label data-checkbox-for="check-1" class="test">
+                        Check-1
+                    </label>
                     <input type="checkbox" name="check-2" id="check-2" value="Test-2" />
                     <label for="check-2">Check-2</label>
                     <input type="checkbox" name="check-3" id="check-3" value="Test-3" />
@@ -54,7 +58,7 @@ describe('CheckBox Integration Test', () => {
             fireEvent.click(checkAllInput);
 
             // Check if all checkboxes under check-box-list are checked
-            checkBox.elements.forEach(checkbox => {
+            checkBox.elements.forEach((checkbox) => {
                 expect(checkbox.checked).toBe(true);
             });
         }
