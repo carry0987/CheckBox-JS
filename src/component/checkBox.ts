@@ -114,7 +114,7 @@ class CheckBox {
         if (ele.checked) {
             Utils.toggleCheckStatus(ele, true);
         } else {
-            if (this.options.checked) {
+            if (this.options.checked !== null) {
                 // Initialize checkbox checked status based on options
                 this.updateCheckboxStatus(ele, index);
             }

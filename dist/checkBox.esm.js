@@ -399,7 +399,7 @@ const reportInfo = (vars, showType = false) => {
 
 class CheckBox {
     static instances = [];
-    static version = '2.2.3';
+    static version = '2.2.4';
     static firstLoad = true;
     element = null;
     options = defaults;
@@ -492,7 +492,7 @@ class CheckBox {
             Utils.toggleCheckStatus(ele, true);
         }
         else {
-            if (this.options.checked) {
+            if (this.options.checked !== null) {
                 // Initialize checkbox checked status based on options
                 this.updateCheckboxStatus(ele, index);
             }
