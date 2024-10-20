@@ -399,7 +399,7 @@ const reportInfo = (vars, showType = false) => {
 
 class CheckBox {
     static instances = [];
-    static version = '2.2.4';
+    static version = '2.2.5';
     static firstLoad = true;
     element = null;
     options = defaults;
